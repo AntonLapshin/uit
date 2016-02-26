@@ -1,0 +1,1 @@
+Droplet.define('gold', [], function () { });
