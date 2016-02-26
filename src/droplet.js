@@ -6,7 +6,7 @@
         module.exports = factory(require("jquery"));
     } 
     else {
-        root.myModule = factory(root.jquery);
+        root.Droplet = factory(root.$);
     }
 }(this, function($) {
     
@@ -877,7 +877,7 @@ define(['jquery'], function ($) {
         return defer;
     }
 
-    return window.Droplet = {
+    return {
         
         //
         // Droplet class. For extend.
