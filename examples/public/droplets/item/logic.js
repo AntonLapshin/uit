@@ -1,0 +1,3 @@
+Droplet.define('item', [], function(){
+	
+});

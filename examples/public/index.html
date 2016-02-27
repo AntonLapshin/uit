@@ -1,12 +1,18 @@
 <html>
   <head>
-    <title>node.js http server</title>
+    <title>Droplet.JS Demo</title>
   </head>
   <body>
+  	<div id="container"></div>
 
-    <h1>Serving up static files like they were turtles strapped to rockets.</h1>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+    <script src="../../dist/droplet.min.js"></script>
 
-    <img src="./img/turtle.png"/>
+    <script>
+    	Droplet.append('item', '#container').then(function(instance){
+    		instance.show();
+    	});
+    </script>
   </body>
 </html>
 
