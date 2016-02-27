@@ -515,8 +515,10 @@
         // Overrides default options
         // 
         setOptions: function(options){
+            if (options.baseUrl)
+                options.baseUrl = options.baseUrl + '/{0}/';
             _options = $.extend(_options, options);
         }
     };
-    
+
 }));
