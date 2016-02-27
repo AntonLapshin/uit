@@ -1,0 +1,38 @@
+{
+  "name": "droplet.js",
+  "version": "1.0.0",
+  "description": "Light-weight Single Page Application framework",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {
+    "gulp-uglify": "^1.5.3",
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "gulp-notify": "^2.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntonLapshin/droplet.js.git"
+  },
+  "keywords": [
+    "template",
+    "custom",
+    "components",
+    "modules",
+    "observable",
+    "data",
+    "binding"
+  ],
+  "author": "Anton Lapshin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AntonLapshin/droplet.js/issues"
+  },
+  "homepage": "https://github.com/AntonLapshin/droplet.js#readme"
+}

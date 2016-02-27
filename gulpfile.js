@@ -1,0 +1,10 @@
+var gulp = require('gulp');
+var uglify = require('gulp-uglify');
+var notify = require('gulp-notify');
+
+gulp.task('build-js', function() {
+  return gulp.src('src/**/*.js')
+    .pipe(uglify())
+    .pipe(gulp.dest('dist'))
+    .pipe(notify({ message: 'Javascript file has been minified' })); 
+});

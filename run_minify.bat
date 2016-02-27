@@ -1,0 +1,2 @@
+gulp build-js
+PAUSE
