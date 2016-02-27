@@ -1,2 +1,2 @@
-gulp build-js
+gulp minify-js
 PAUSE
