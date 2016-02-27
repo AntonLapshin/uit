@@ -12,12 +12,12 @@ gulp.task('build-js', function() {
 });
 
 gulp.task('less', function () {
-  gulp.src('example/**/*.less')
+  gulp.src('examples/**/*.less')
     .pipe(cache('less'))
     .pipe(less())
-    .pipe(gulp.dest('example'));
+    .pipe(gulp.dest('examples'));
 });
 
 gulp.task('watch-less', function() {
-  gulp.watch('example/**/*.less', ['less']);
+  gulp.watch('examples/**/*.less', ['less']);
 });
