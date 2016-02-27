@@ -1,7 +1,84 @@
-require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, strings){
+/*
+ *
+ * Droplet.JS Bind Extension
+ * Depends on Droplet
+ *
+ */
+;(function (root, factory) {
 
-    Droplet.Instance.prototype.game = game;
-    Droplet.Instance.prototype.strings = strings;
+    if (typeof define === "function" && define.amd) {
+        define(["Droplet"], factory);
+    } 
+    else if (typeof module === "object" && module.exports) {
+        module.exports = factory(require("Droplet"));
+    } 
+    else {
+        root.DropletBind = factory(root.Droplet);
+    }
+
+}(this, function(Droplet) {
+
+    //
+    // Observable implementation
+    //
+    Droplet.observable = (function(){
+
+        var _subs = [];
+        var _index = 0;
+
+        function on(uid, handler){
+            var hs = _subs[uid];
+            if (!hs){
+                hs = [];
+                _subs[uid] = hs;
+            }
+
+            hs.push(handler);
+        }
+
+        function off(uid, handler){
+            var hs = _subs[uid];
+            if (!hs)
+                return;
+
+            var i = hs.indexOf(handler);
+            hs.splice(i, 1);
+        }
+
+        function fire(uid, data, oldData){
+            var hs = _subs[uid];
+            if (!hs)
+                return;
+
+            hs.forEach(function(h){
+                h(data, oldData);
+            });
+        }
+
+        return function(data){
+            var _data = data;
+            var _uid = _index++;
+
+            var Observable = function(data){
+                if (data === undefined)
+                    return _data;
+
+                var oldData = _data;
+                _data = data;
+                fire(_uid, data, oldData);
+            };
+
+            Observable.on = function(h){
+                on(_uid, h);
+            };
+            Observable.off = function(h){
+                off(_uid, h);
+            }
+            
+            return Observable;
+        };
+
+    })();
 
     function handleMethod(path, method){
         var self = this;
@@ -15,12 +92,7 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
         }
 
         var p = path.split('.');
-        if (p[0] === 'strings'){
-            p.shift();
-            target = getTarget(strings, p);
-            bind(target, method);
-        }
-        else if (p[0] !== 'data'){
+        if (p[0] !== 'data'){
             target = getTarget(self, p);
             bind(target, method);                
         }
@@ -49,8 +121,8 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
 
     function bind(target, method){
         if (target.on){
-            target.on('change', method);
-            method(target());
+            target.on(method);
+            method(target()); 
         }
         else
             method(target);
@@ -58,7 +130,7 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
 
     function unbind(target, method){
         if (target.off)
-            target.off('change', method);        
+            target.off(method);        
     }
 
     function getv(v){
@@ -123,12 +195,6 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
                 self[methodName].call(self, $e);
             });            
         },
-        fire: function($e, eventName){
-            var self = this;
-            $e.click(function(){
-                self.game.fire(eventName);
-            });            
-        },
         place: function($e, value){
             $e.attr('data-placement', value);
         },
@@ -137,6 +203,10 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
         },
     }
 
+    //
+    // Adds one-way data binding
+    // Example: <div data-bind="title: data.title"></div>
+    //
     Droplet.addExtension(function(prototype){
         var self = this;
         self.$all.filter('[data-bind]').each(function(){
@@ -151,4 +221,4 @@ require(['droplet', 'game', 'plugins/localization'], function(Droplet, game, str
         });
     });
 
-});
+}));

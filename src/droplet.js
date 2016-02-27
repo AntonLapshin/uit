@@ -1,4 +1,11 @@
-(function (root, factory) {
+/*
+ *
+ * Droplet.JS
+ * Depends on jQuery 
+ *
+ */
+;(function (root, factory) {
+
     if (typeof define === "function" && define.amd) {
         define(["jquery"], factory);
     } 
@@ -8,6 +15,7 @@
     else {
         root.Droplet = factory(root.$);
     }
+
 }(this, function($) {
     
     String.prototype.f = function() {
@@ -420,10 +428,12 @@
         //
         // Loads and appends a droplet into $container
         // @name is name of the droplet
-        // @$container is a jquery object. Place where the droplet should be inserted
+        // @container is a css selector or $ object. Place where the droplet should be inserted
         //
-        append: function (name, $container){
+        append: function (name, container){
             var defer = $.Deferred();
+
+            var $container = $(container);
             
             if (_droplets[name]){
                 buildAndLookup($container, name).then(defer.resolve);
@@ -486,12 +496,12 @@
         // Fires an event
         //
         fire: function(event, args){
-            console.log('Droplet.fire: ', event + (args != undefined ? ' args: ' + args : ''));
-            if (_events.hasOwnProperty(event)) {
-                $.each(_events[event], function(i, el){
-                    el(args);
-                });
-            }
+            if (!_events.hasOwnProperty(event))
+                return;
+
+            $.each(_events[event], function(i, el){
+                el(args);
+            });
         },
 
         //
@@ -508,4 +518,5 @@
             _options = $.extend(_options, options);
         }
     };
+    
 }));
