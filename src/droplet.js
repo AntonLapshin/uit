@@ -72,9 +72,8 @@
         function IDroplet(dropletName, name, constructor, $droplet){
             this.dropletName = dropletName;
             this.name = name;
-            this.$droplet = $droplet;
             this.$all = $droplet.find('*').not('[data-droplet]');
-            this.$view = $droplet.children().first();
+            this.$droplet = $droplet;
             this.children = {};
 
             constructor(this);
@@ -132,32 +131,32 @@
     function build($droplet){
         var defer = $.Deferred();
 
-        var dropletName = $droplet[0].nodeName.toLowerCase();
+        var dropletName = $droplet.attr('data-droplet');
         var droplet = _droplets[dropletName];
-        var $parent = $droplet.closest('[data-ready]');
+        var $parent = $droplet.closest('[data-droplet]');
         var parentName = $parent.attr('data-name');
-        var dropletNameSpec = $droplet.attr('data-droplet');
+        var dropletCall = $droplet.attr('data-call');
         var name = getName(parentName, dropletName);
         var parent, index;
 
         if (parentName){
             parent = _instances[parentName];
-            if (dropletNameSpec === 'li'){
+            if (dropletCall === 'li'){
                 if (!parent.children[dropletName])
                     parent.children[dropletName] = [];
                 index = parent.children[dropletName].length;
                 name += '[{0}]'.f(index);
             }
-            else if (dropletNameSpec !== ''){
+            else if (dropletCall !== ''){
                 if (!parent.children[dropletName])
                     parent.children[dropletName] = {};
-                name += '[{0}]'.f(dropletNameSpec);                    
+                name += '[{0}]'.f(dropletCall);                    
             }
         }                
 
         $droplet
+            .addClass(dropletName)
             .attr('data-name', name)
-            .attr('data-ready', true)
             .hide()
             .html(droplet.view);
 
@@ -169,32 +168,39 @@
             if (index !== undefined){
                 parent.children[dropletName].push(instance);
             }
-            else if (dropletNameSpec){
-                parent.children[dropletName][dropletNameSpec] = instance;
+            else if (dropletCall){
+                parent.children[dropletName][dropletCall] = instance;
             }
             else {
                 parent.children[dropletName] = instance;
             }
             instance.parent = parent;
-            var eventHandler = parent['{0}Loaded'.f(dropletName)];
-            if (eventHandler)
-                eventHandler(instance);
+            // ?????
+            // var eventHandler = parent['{0}Loaded'.f(dropletName)];
+            // if (eventHandler)
+            //     eventHandler(instance);
         }
 
         lookup($droplet).then(function(){
             instance.load();        
-            defer.resolve();
+            defer.resolve(instance);
         });
 
         return defer;
     }
 
-    function lookup($container, dropletName){
-        var defer = $.Deferred();
-
+    //
+    // Lookup for droplet inside of the container
+    //
+    function lookup($container){
         $container = $container || $('body');
+        var $droplets = $container.find('[data-droplet]');
 
-        var $droplets = $container.find('{0}[data-droplet]'.f(dropletName || ''));
+        if ($droplets.length === 0){
+            var defer = $.Deferred();
+            defer.resolve();
+            return defer;
+        }
 
         var defers = [];
         $droplets.each(function(){
@@ -202,41 +208,16 @@
             defers.push(build($droplet));
         });
 
-        if ($droplets.length === 0){
+        return $.when.apply(this, defers);
+    }
+
+    function loadDeps(name, deps){
+        if (!deps || deps.length === 0){
+            var defer = $.Deferred();
             defer.resolve();
             return defer;
         }
 
-        $.when.apply(this, defers).then(function(){
-            defer.resolve();
-        });
-
-        return defer;
-    }
-
-    function genListHtml(dropletName, num){
-        var html = '';
-        var item = '<{0} data-droplet="li"></{0}>'.f(dropletName);
-        for(var i = 0; i < num; i++){
-            html += item;
-        }
-        return html;
-    };
-
-    function buildAndLookup($container, dropletName){
-        var defer = $.Deferred();
-
-        $container.append('<{0} data-droplet></{0}>'.f(dropletName));
-        lookup($container, dropletName).then(function(){
-            var name = $container.find('> {0}[data-ready]'.f(dropletName)).attr('data-name');
-            var instance = _instances[name];
-            defer.resolve(instance);
-        });
-
-        return defer;
-    }
-
-    function loadDeps(name, deps){
         var baseUrl = _options.baseUrl.f(name);
         var defers = [];        
         $.each(deps, function(i, dep){
@@ -342,44 +323,54 @@
     function loadScript(url){
         var defer = $.Deferred();
 
-        url = url.substr(0, url.length - 3);
         if (_scripts[url]){
             defer.resolve(_scripts[url]);
             return defer;
         }
 
-        if (require){
-            require([url], function(script){
+        if (window.require){
+            require([url.substr(0, url.length - 3)], function(script){
                 _scripts[url] = script;
                 defer.resolve(script);
             });
         }
         else {
-            // TODO: Implement jQuery loading
-            throw 'Loading js dependecies is not implemented';
+            loadJS(url).then(function(){
+                _scripts[url] = true;
+                defer.resolve();
+            });
         }          
 
         return defer;
     }
 
+    //
+    // Loads logic + view + style. The define method calls after loading
+    //
     function loadDroplet(name){
-        var defer = $.Deferred();
-
         if (_droplets[name]){
+            var defer = $.Deferred();
             defer.resolve(_droplets[name]);
             return defer;
         }
 
-        var url = _options.baseUrl.f(name) + 'logic.js';   
-        Droplet.on('{0}.onload'.f(name), function(droplet){
-            defer.resolve(droplet);
+        _droplets[name] = droplet = {
+            name: name,
+            deps: null            
+        };
+
+        var logicDefer = $.Deferred();
+        Droplet.on('{0}.load'.f(name), function(droplet){
+            logicDefer.resolve(droplet);
         });
 
-        loadJS(url).then(function(){
-            _scripts[url] = true;
-        });
+        var depsDefer = $.Deferred();
+        loadDeps(name, ['view.html', 'style.css', 'logic.js']).then(function(view){
+            droplet.view = view;
+            depsDefer.resolve();
+        })
 
-        return defer;
+        return $.when.apply(this, [logicDefer, depsDefer]);
     }
 
     return {
@@ -396,55 +387,32 @@
         // @args[2] is constructor of a droplet
         //
         define: function(){
-            var view, name, deps, Logic;
-
-            deps = deps || [];   
-
-            name = arguments[0];
-            deps = arguments[1];
-            Logic = arguments[2];
+            var name = arguments[0];
+            var deps = arguments[1];
+            var Logic = arguments[2];
             
-            deps.push('view.html'); 
-            deps.push('style.css');
-
-            if (_droplets[name]){
-                return;
-            }
+            var droplet = _droplets[name];
 
             loadDeps(name, deps).then(function(){
-                var droplet = {
-                    deps: arguments,
-                    view: view || arguments[arguments.length - 2],
-                    name: name
-                }
-                _droplets[name] = droplet;                
+                droplet.deps = arguments;
                 droplet.constructor = function(context){
                     Logic.apply(context, droplet.deps);
                 };
-                Droplet.fire('{0}.onload'.f(name), droplet);
+                Droplet.fire('{0}.load'.f(name), droplet);
             });
         },
 
         //
         // Loads and appends a droplet into $container
-        // @name is name of the droplet
+        // @dropletName is name of the droplet
         // @container is a css selector or $ object. Place where the droplet should be inserted
         //
-        append: function (name, container){
-            var defer = $.Deferred();
-
-            var $container = $(container);
-            
-            if (_droplets[name]){
-                buildAndLookup($container, name).then(defer.resolve);
-                return defer;
-            }
-
-            loadDroplet(name).then(function(){
-                buildAndLookup($container, name).then(defer.resolve);
+        append: function (dropletName, container){
+            return loadDroplet(dropletName).then(function(){
+                var $container = $(container);
+                $container.append('<div data-droplet="{0}"></div>'.f(dropletName));
+                return lookup($container, dropletName);                
             });
-
-            return defer;
         },
 
         //
@@ -454,21 +422,22 @@
         // @dropletName is name of the droplet items
         // @isHide if it's need to hide items
         //
-        buildList: function(parent, $ul, dropletName, items, isHide){
-            var defer = $.Deferred();
-
-            var html = genListHtml(dropletName, items.length);
-            $ul.html(html);
-            lookup($ul).then(function(){
-                $.each(items, function(i, item){
-                    parent.children[dropletName][i].set(item);
-                    if (!isHide)
-                        parent.children[dropletName][i].show();
+        appendList: function(parent, $ul, dropletName, items, isHide){
+            return loadDroplet(dropletName).then(function(){
+                var html = '';
+                var item = '<div data-call="li"></div>'.f(dropletName);
+                for(var i = 0; i < num; i++){
+                    html += item;
+                }                
+                $ul.html(html);
+                return lookup($ul).then(function(){
+                    $.each(items, function(i, item){
+                        parent.children[dropletName][i].set(item);
+                        if (!isHide)
+                            parent.children[dropletName][i].show();
+                    });
                 });
-                defer.resolve();
             });
-
-            return defer;
         },
 
         //
