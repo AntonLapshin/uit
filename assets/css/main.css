@@ -1729,6 +1729,8 @@
 		font-family: "Courier New", monospace;
 		font-size: 0.9em;
 		margin: 0 0 2em 0;
+		border: 1px solid #ddd;
+		padding: 1em 1.5em;
 	}
 
 		pre code {
@@ -2713,6 +2715,7 @@
 		margin-left: -1px;
 		margin-top: -1px;
 		width: 33.33333%;
+		background-color: #FBFBFB;
 	}
 
 		.feature .fa {
@@ -3761,6 +3764,7 @@
 		color: #444;
 		padding: 5em 0 4em 0;
 		position: relative;
+		border-top: 1px solid #ddd;
 	}
 
 		#footer input, #footer select, #footer textarea {
@@ -3790,16 +3794,6 @@
 
 		#footer hr {
 			border-bottom-color: #ddd;
-		}
-
-		#footer:before {
-			background-color: #ddd;
-			content: '';
-			height: 1px;
-			left: 30%;
-			position: absolute;
-			top: 0;
-			width: 40%;
 		}
 
 		#footer .copyright {
