@@ -3540,6 +3540,11 @@
 		text-align: center;
 	}
 
+	#two {
+		border-top: 1px solid #ddd;
+		border-bottom: 1px solid #ddd;
+	}
+
 		#logo {
 		    width: 50px;
 		    cursor: pointer;
