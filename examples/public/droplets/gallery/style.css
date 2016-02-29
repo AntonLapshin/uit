@@ -1,6 +1,7 @@
 .gallery h1 {
   font-size: 2em;
   text-align: center;
+  line-height: 50px;
 }
 .gallery .items {
   width: 100%:
