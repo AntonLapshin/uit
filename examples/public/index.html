@@ -1,17 +1,17 @@
 <html>
   <head>
     <title>Droplet.JS Demo</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet">
   </head>
   <body>
   	<div id="container"></div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
     <script src="../../src/droplet.js"></script>
+    <script src="../../src/droplet-bind.js"></script>
 
     <script>
-    	Droplet.append('item', '#container').then(function(instance){
-    		instance.show();
-    	});
+    	Droplet.run('#container');
     </script>
   </body>
 </html>

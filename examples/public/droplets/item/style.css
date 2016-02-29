@@ -1,5 +1,46 @@
 .item {
-  width: 150px;
-  height: 120px;
+  width: 23%;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+  border: 1px solid #ddd;
+}
+.item:after {
+  padding-top: 56.25%;
+  /* 16:9 ratio */
+  display: block;
+  content: '';
+}
+.item > * {
+  position: absolute;
+}
+.item .loader {
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+}
+.item .thumbnail {
+  width: 100%;
+}
+.item .details {
+  width: 100%;
+  height: 100%;
   background-color: gray;
+  opacity: 0;
+  text-align: center;
+  cursor: pointer;
+}
+.item .details h2 {
+  font-size: 2em;
+}
+.item .details p {
+  font-size: 1.5em;
+}
+.item .details:hover {
+  opacity: 0.5;
+}
+.item .details h2 {
+  margin-top: 35px;
 }

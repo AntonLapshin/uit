@@ -133,7 +133,7 @@
 
         var dropletName = $droplet.attr('data-droplet');
         var droplet = _droplets[dropletName];
-        var $parent = $droplet.closest('[data-droplet]');
+        var $parent = $droplet.parents('[data-droplet]').eq(0);
         var parentName = $parent.attr('data-name');
         var dropletCall = $droplet.attr('data-call');
         var name = getName(parentName, dropletName);
@@ -141,7 +141,7 @@
 
         if (parentName){
             parent = _instances[parentName];
-            if (dropletCall === 'li'){
+            if (dropletCall === 'byIndex'){
                 if (!parent.children[dropletName])
                     parent.children[dropletName] = [];
                 index = parent.children[dropletName].length;
@@ -156,6 +156,7 @@
 
         $droplet
             .addClass(dropletName)
+            .attr('data-ready', true)
             .attr('data-name', name)
             .hide()
             .html(droplet.view);
@@ -175,10 +176,6 @@
                 parent.children[dropletName] = instance;
             }
             instance.parent = parent;
-            // ?????
-            // var eventHandler = parent['{0}Loaded'.f(dropletName)];
-            // if (eventHandler)
-            //     eventHandler(instance);
         }
 
         lookup($droplet).then(function(){
@@ -194,7 +191,7 @@
     //
     function lookup($container){
         $container = $container || $('body');
-        var $droplets = $container.find('[data-droplet]');
+        var $droplets = $container.find('[data-droplet]').not('[data-ready]');
 
         if ($droplets.length === 0){
             var defer = $.Deferred();
@@ -209,6 +206,15 @@
         });
 
         return $.when.apply(this, defers);
+    }
+
+    function append(container, dropletName, html){
+        var $container = $(container);
+        return loadDroplet(dropletName).then(function(){
+            var $container = $(container);
+            $container.append(html);
+            return lookup($container);                
+        });
     }
 
     function loadDeps(name, deps){
@@ -354,10 +360,11 @@
             return defer;
         }
 
-        _droplets[name] = droplet = {
+        var droplet = {
             name: name,
             deps: null            
         };
+        _droplets[name] = droplet;
 
         var logicDefer = $.Deferred();
         Droplet.on('{0}.load'.f(name), function(droplet){
@@ -408,11 +415,7 @@
         // @container is a css selector or $ object. Place where the droplet should be inserted
         //
         append: function (dropletName, container){
-            return loadDroplet(dropletName).then(function(){
-                var $container = $(container);
-                $container.append('<div data-droplet="{0}"></div>'.f(dropletName));
-                return lookup($container, dropletName);                
-            });
+            return append(container, dropletName, '<div data-droplet="{0}"></div>'.f(dropletName));
         },
 
         //
@@ -422,22 +425,27 @@
         // @dropletName is name of the droplet items
         // @isHide if it's need to hide items
         //
-        appendList: function(parent, $ul, dropletName, items, isHide){
-            return loadDroplet(dropletName).then(function(){
-                var html = '';
-                var item = '<div data-call="li"></div>'.f(dropletName);
-                for(var i = 0; i < num; i++){
-                    html += item;
-                }                
-                $ul.html(html);
-                return lookup($ul).then(function(){
-                    $.each(items, function(i, item){
-                        parent.children[dropletName][i].set(item);
-                        if (!isHide)
-                            parent.children[dropletName][i].show();
-                    });
-                });
+        appendList: function(parent, container, dropletName, items, isHide){
+            var html = '';
+            var item = '<li data-droplet="{0}" data-call="byIndex"></li>'.f(dropletName);
+            for(var i = 0; i < items.length; i++){
+                html += item;
+            }
+            return append(container, dropletName, html).then(function(){
+                $.each(items, function(i, item){
+                    parent.children[dropletName][i].set(item);
+                    !isHide && parent.children[dropletName][i].show();
+                });                
             });
+        },
+
+        run: function(container){
+            var search = window.location.search,
+                dropletName = search.length > 0 ? search.substring(1) : null;
+
+            this.append(dropletName, container).then(function(instance){
+                instance.test();
+            });                
         },
 
         //
@@ -460,6 +468,17 @@
             }
             _events[event].push(el);
         },
+
+        //
+        // Unubscribes from Droplet events
+        //
+        off: function(event, el){
+            if (!_events.hasOwnProperty(event)) {
+                return;
+            }
+            var index = _events[event].indexOf(el);
+            _events[event].splice(index, 1);
+        },        
 
         //
         // Fires an event
@@ -488,6 +507,7 @@
                 options.baseUrl = options.baseUrl + '/{0}/';
             _options = $.extend(_options, options);
         }
+
     };
 
 }));
