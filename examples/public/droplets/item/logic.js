@@ -2,10 +2,6 @@ Droplet.define('item', [], function(){
 	
 	var self = this;
 
-	self.click = function(){
-		self.parent && self.parent.select(self.data.id);
-	};
-
 	self.on('set', function(data){
 		Droplet.loadImage(data.src).then(function(){
 			self.$thumbnail.attr('src', data.src);
@@ -20,6 +16,6 @@ Droplet.define('item', [], function(){
 			src: 'http://lorempixel.com/889/500/nature/'
 		};
 		self.set(data).show();
-	})
+	});
 
 });

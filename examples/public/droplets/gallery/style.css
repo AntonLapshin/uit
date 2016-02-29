@@ -1,7 +1,12 @@
+.gallery {
+  margin: 10px;
+  background-color: #8792A2;
+  color: #FFFFFF;
+}
 .gallery h1 {
-  font-size: 2em;
+  font-size: 3em;
   text-align: center;
-  line-height: 50px;
+  padding-top: 10px;
 }
 .gallery .items {
   width: 100%:
