@@ -13,7 +13,7 @@ Droplet.define('gallery', ['item'], function(){
 	});
 
 	self.on('test', function(){
-		$.get('http://beta.json-generator.com/api/json/get/N16M8W6ox', function(data){
+		$.get('//beta.json-generator.com/api/json/get/N16M8W6ox', function(data){
 			self.set(data).show();
 		});
 	})
