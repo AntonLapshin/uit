@@ -207,7 +207,7 @@
     // Adds one-way data binding
     // Example: <div data-bind="title: data.title"></div>
     //
-    Droplet.addExtension(function(prototype){
+    Droplet.addExtension(function(){
         var self = this;
         self.$all.filter('[data-bind]').each(function(){
             var $e = $(this);

@@ -389,9 +389,9 @@
 
         //
         // Defines a new droplet
-        // @args[0] is name
-        // @args[1] is array of dependecies
-        // @args[2] is constructor of a droplet
+        // @param args[0] is name
+        // @param args[1] is array of dependecies
+        // @param args[2] is constructor of a droplet
         //
         define: function(){
             var name = arguments[0];
@@ -407,10 +407,12 @@
                 };
                 Droplet.fire('{0}.load'.f(name), droplet);
             });
+
+            return this;
         },
 
         //
-        // Loads and appends a droplet into $container
+        // Loads and appends a droplet into container
         // @dropletName is name of the droplet
         // @container is a css selector or $ object. Place where the droplet should be inserted
         //
@@ -443,9 +445,9 @@
             var search = window.location.search,
                 dropletName = search.length > 0 ? search.substring(1) : null;
 
-            this.append(dropletName, container).then(function(instance){
+            return this.append(dropletName, container).then(function(instance){
                 instance.test();
-            });                
+            });          
         },
 
         //
@@ -467,6 +469,7 @@
                 _events[event] = [];
             }
             _events[event].push(el);
+            return this;
         },
 
         //
@@ -474,10 +477,11 @@
         //
         off: function(event, el){
             if (!_events.hasOwnProperty(event)) {
-                return;
+                return this;
             }
             var index = _events[event].indexOf(el);
             _events[event].splice(index, 1);
+            return this;
         },        
 
         //
@@ -485,11 +489,12 @@
         //
         fire: function(event, args){
             if (!_events.hasOwnProperty(event))
-                return;
+                return this;
 
             $.each(_events[event], function(i, el){
                 el(args);
             });
+            return this;
         },
 
         //
@@ -497,6 +502,7 @@
         //
         addExtension: function(extension){
             _extensions.push(extension);
+            return this;
         },
 
         //
@@ -506,6 +512,7 @@
             if (options.baseUrl)
                 options.baseUrl = options.baseUrl + '/{0}/';
             _options = $.extend(_options, options);
+            return this;
         }
 
     };
