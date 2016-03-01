@@ -1,4 +1,3 @@
 # droplet.js
 
-Please see the [website](http://antonlapshin.github.io/droplet.js/) for further details.
-[Documentation](http://docs.dropletjs.apiary.io/)
+Please see the [website](http://antonlapshin.github.io/droplet.js/) and [documentation](http://docs.dropletjs.apiary.io/) for further details.
