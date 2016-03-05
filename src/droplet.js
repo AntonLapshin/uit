@@ -717,7 +717,8 @@
                 var parts = statement.split(':');
                 var key = parts[0].trim();
                 var value = parts[1].trim();
-                RULES[key].call(self, $e, value, statement);
+                if (RULES[key])
+                    RULES[key].call(self, $e, value, statement);
             });
         });
     }); 
