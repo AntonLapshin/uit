@@ -508,7 +508,7 @@
         },
     }
 
-    var Droplet = {
+    var Droplet = window.Droplet = {
         
         //
         // Droplet class. For extend.
