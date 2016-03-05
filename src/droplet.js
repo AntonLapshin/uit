@@ -210,7 +210,7 @@
 
     function append(container, dropletName, html){
         var $container = $(container);
-        return loadDroplet(dropletName).then(function(){
+        return loadDroplet(dropletName).always(function(){
             var $container = $(container);
             $container.append(html);
             return lookup($container);                
@@ -561,7 +561,7 @@
             for(var i = 0; i < items.length; i++){
                 html += item;
             }
-            return append(container, dropletName, html).then(function(){
+            return append(container, dropletName, html).always(function(){
                 $.each(items, function(i, item){
                     parent.children[dropletName][i].set(item);
                     !isHide && parent.children[dropletName][i].show();
@@ -573,7 +573,7 @@
             var search = window.location.search,
                 dropletName = search.length > 0 ? search.substring(1) : null;
 
-            return this.append(dropletName, container).then(function(instance){
+            return this.append(dropletName, container).always(function(instance){
                 instance.test();
             });          
         },
