@@ -385,65 +385,6 @@
     // ----------------------------------------
     //
 
-    Droplet.observable = (function(){
-
-        var _subs = [];
-        var _index = 0;
-
-        function on(uid, handler){
-            var hs = _subs[uid];
-            if (!hs){
-                hs = [];
-                _subs[uid] = hs;
-            }
-
-            hs.push(handler);
-        }
-
-        function off(uid, handler){
-            var hs = _subs[uid];
-            if (!hs)
-                return;
-
-            var i = hs.indexOf(handler);
-            hs.splice(i, 1);
-        }
-
-        function fire(uid, data, oldData){
-            var hs = _subs[uid];
-            if (!hs)
-                return;
-
-            hs.forEach(function(h){
-                h(data, oldData);
-            });
-        }
-
-        return function(data){
-            var _data = data;
-            var _uid = _index++;
-
-            var Observable = function(data){
-                if (data === undefined)
-                    return _data;
-
-                var oldData = _data;
-                _data = data;
-                fire(_uid, data, oldData);
-            };
-
-            Observable.on = function(h){
-                on(_uid, h);
-            };
-            Observable.off = function(h){
-                off(_uid, h);
-            }
-            
-            return Observable;
-        };
-
-    })();
-
     function handleMethod(path, method){
         var self = this;
         var target;
@@ -703,6 +644,65 @@
         }
 
     };
+
+    Droplet.observable = (function(){
+
+        var _subs = [];
+        var _index = 0;
+
+        function on(uid, handler){
+            var hs = _subs[uid];
+            if (!hs){
+                hs = [];
+                _subs[uid] = hs;
+            }
+
+            hs.push(handler);
+        }
+
+        function off(uid, handler){
+            var hs = _subs[uid];
+            if (!hs)
+                return;
+
+            var i = hs.indexOf(handler);
+            hs.splice(i, 1);
+        }
+
+        function fire(uid, data, oldData){
+            var hs = _subs[uid];
+            if (!hs)
+                return;
+
+            hs.forEach(function(h){
+                h(data, oldData);
+            });
+        }
+
+        return function(data){
+            var _data = data;
+            var _uid = _index++;
+
+            var Observable = function(data){
+                if (data === undefined)
+                    return _data;
+
+                var oldData = _data;
+                _data = data;
+                fire(_uid, data, oldData);
+            };
+
+            Observable.on = function(h){
+                on(_uid, h);
+            };
+            Observable.off = function(h){
+                off(_uid, h);
+            }
+            
+            return Observable;
+        };
+
+    })();
 
     //
     // Adds one-way data binding
