@@ -1,5 +1,6 @@
 const _images = [];
 const _styles = [];
+const _views = [];
 const _scripts = [];
 const _timeout = 3000;
 
@@ -77,5 +78,25 @@ export const loadJS = url => {
 
     script.src = url;
     document.getElementsByTagName("head")[0].appendChild(script);
+  });
+};
+
+export const loadView = url => {
+  return new Promise((resolve, reject) => {
+    if (_views[url]) {
+      resolve(_views[url]);
+      return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+      if (this.readyState !== 4 || this.status !== 200) {
+        return;
+      }
+      _views[url] = this.responseText;
+      resolve(_views[url]);
+    };
+    xhr.send();
   });
 };
