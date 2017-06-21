@@ -15,7 +15,8 @@
     "gulp-notify": "^2.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rollup": "./node_modules/.bin/rollup src/instance.js --format umd --name \"Droplet\" --output dist/droplet.js"
   },
   "repository": {
     "type": "git",
@@ -35,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/AntonLapshin/droplet.js/issues"
   },
-  "homepage": "https://github.com/AntonLapshin/droplet.js#readme"
+  "homepage": "https://github.com/AntonLapshin/droplet.js#readme",
+  "devDependencies": {
+    "rollup": "^0.43.0"
+  }
 }
