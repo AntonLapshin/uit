@@ -1,43 +1,40 @@
-  function getTarget(ctx, p) {
-    if (ctx == null)
-      return null;
-    var val = ctx;
-    $.each(p, function(i, name) {
-      if (val == null) {
-        //console.log( '{0} is not found in object {1}'.f(p, JSON.stringify(ctx)) );
-        return null;
-      }
-      val = val[name];
-    });
-    if (val == null) {
-      //console.log( '{0} is not found in object {1}'.f(p, JSON.stringify(ctx)) );
-      return null;
-    }
-    return val;
+const getTarget = (ctx, p) => {
+  if (ctx == null) {
+    return null;
   }
+  if (p.length === 0) {
+    return ctx;
+  }
+  ctx = ctx[p[0]];
+  p.shift();
+  return getTarget(ctx, p);
+};
 
-  function bind(target, method) {
-    if (target == null)
-      return;
-    if (target.on) {
-      target.on(method);
-      method(target());
-    } else
-      method(target);
+const bind = (target, method) => {
+  if (target == null) {
+    return;
   }
+  if (target.on) {
+    target.on(method);
+    method(target());
+  } else {
+    method(target);
+  }
+};
 
-  function unbind(target, method) {
-    if (target == null)
-      return;
-    if (target.off)
-      target.off(method);
+const unbind = (target, method) => {
+  if (target == null) {
+    return;
   }
+  if (target.off) {
+    target.off(method);
+  }
+};
 
 const getv = v => {
   if (v == null) {
     return v;
   }
-
   return v.on ? v() : v;
 };
 
@@ -52,14 +49,14 @@ const handle = (path, method) => {
     return;
   }
 
-  var p = path.split(".");
+  const p = path.split(".");
   if (p[0] !== "data") {
     target = getTarget(self, p);
     bind(target, method);
   } else {
     p.shift();
-    self.on("set", function(data) {
-      window.setTimeout(function() {
+    self.on("set", data => {
+      window.setTimeout(() => {
         if (self.olddata) {
           target = getTarget(self.olddata, p);
           unbind(target, method);
@@ -81,13 +78,13 @@ export const Rules = {
     });
   },
   src: function(el, path) {
-    handle.call(this, path, (v) => {
-      $e.attr("src", getv(v));
+    handle.call(this, path, v => {
+      el.setAttribute("src", getv(v));
     });
   },
-  text: function($e, path) {
+  text: function(el, path) {
     handle.call(this, path, function(v) {
-      $e.text(getv(v));
+      el.textContent = getv(v);
     });
   },
   class: function($e, path, statement) {
@@ -103,7 +100,7 @@ export const Rules = {
   },
   href: function($e, path) {
     handle.call(this, path, function(v) {
-      $e.attr("href", getv(v));
+      el.setAttribute("href", getv(v));
     });
   },
   val: function($e, path) {
@@ -113,7 +110,7 @@ export const Rules = {
   },
   html: function($e, path) {
     handle.call(this, path, function(v) {
-      $e.html(getv(v));
+      el.innerHTML = getv(v);
     });
   },
   visible: function($e, path) {

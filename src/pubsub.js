@@ -1,4 +1,4 @@
-let uid = -1;
+let _uid = 0;
 
 /**
  * Typical PubSub implementation
@@ -12,14 +12,14 @@ export class PubSub {
    * Subscribes on event. Adds an event handler to a specific event.
    * @param {string} eventName 
    * @param {function} handler
-   * @returns {number} uid of the event handler
+   * @returns {number} _uid of the event handler
    */
   on(eventName, handler) {
     if (!this.handlers.hasOwnProperty(eventName)) {
       this.handlers[eventName] = [];
     }
     this.handlers[eventName].push({
-      token: ++uid,
+      token: _uid++,
       handler
     });
     return token;
