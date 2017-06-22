@@ -1,5 +1,5 @@
-const should = require("should");
-const { Observable } = require("./observable");
+import should from "should";
+import { Observable } from "./observable";
 
 describe("Observable", function() {
   it("on", function(done) {

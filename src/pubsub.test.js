@@ -1,5 +1,5 @@
-const should = require("should");
-const { PubSub } = require("./pubsub");
+import should from "should";
+import { PubSub } from "./pubsub";
 
 class Item extends PubSub {
   update() {
