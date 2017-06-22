@@ -18,8 +18,9 @@ export class PubSub {
     if (!this.handlers.hasOwnProperty(eventName)) {
       this.handlers[eventName] = [];
     }
+    const token = _uid++;
     this.handlers[eventName].push({
-      token: _uid++,
+      token,
       handler
     });
     return token;
@@ -47,7 +48,8 @@ export class PubSub {
    * @returns {boolean} if successfully unsubscribed
    */
   off(token) {
-    for (const hh in this.handlers) {
+    for (const eventName in this.handlers) {
+      const hh = this.handlers[eventName];
       hh.forEach((h, i) => {
         if (h.token === token) {
           hh.splice(i, 1);
