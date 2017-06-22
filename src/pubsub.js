@@ -32,12 +32,12 @@ export class PubSub {
    * @param {object} args 
    * @returns {boolean} true of false if at lease one event handler exists or not
    */
-  fire(eventName, args) {
+  fire(eventName, arg1, arg2) {
     if (!this.handlers.hasOwnProperty(eventName)) {
       return false;
     }
     setTimeout(() => {
-      this.handlers[eventName].forEach(hh => hh.handler(args));
+      this.handlers[eventName].forEach(hh => hh.handler(arg1, arg2));
     }, 0);
     return true;
   }

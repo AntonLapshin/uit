@@ -2,59 +2,46 @@
  * Typical implementation of the Observable variables
  */
 
-const _subs = [];
-const _uid = 0;
+import { PubSub } from "./pubsub";
 
-const on = (uid, handler) => {
-  let hs = _subs[uid];
-  if (!hs) {
-    hs = [];
-    _subs[uid] = hs;
-  }
-  hs.push(handler);
-};
-
-const off = (uid, handler) => {
-  const hs = _subs[uid];
-  if (!hs) {
-    return;
+class ObservableValue extends PubSub {
+  constructor(data) {
+    super();
+    this.data = data;
   }
 
-  const i = hs.indexOf(handler);
-  hs.splice(i, 1);
-};
-
-const fire = (uid, data, oldData) => {
-  const hs = _subs[uid];
-  if (!hs) {
-    return;
+  update(data) {
+    this.olddata = this.data;
+    this.data = data;
+    return this.fire();
   }
 
-  hs.forEach(h => {
-    h(data, oldData);
-  });
-};
+  fire() {
+    return super.fire("update", this.data, this.olddata);
+  }
+
+  on(h) {
+    return super.on("update", h);
+  }
+}
 
 export const Observable = data => {
-  const _data = data;
-  const uid = _uid++;
+  const value = new ObservableValue(data);
 
-  const Observable = data => {
+  const ObservableBehavior = data => {
     if (data === undefined) {
-      return _data;
+      return value.data;
     }
-
-    const oldData = _data;
-    _data = data;
-    fire(uid, data, oldData);
+    value.update(data);
+    return ObservableBehavior;
   };
 
-  Observable.on = h => {
-    on(uid, h);
+  ObservableBehavior.on = h => {
+    return value.on(h);
   };
-  Observable.off = h => {
-    off(uid, h);
+  ObservableBehavior.off = token => {
+    return value.off(token);
   };
 
-  return Observable;
+  return ObservableBehavior;
 };
