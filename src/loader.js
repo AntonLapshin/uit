@@ -8,22 +8,22 @@ const LOADERS = [
   {
     type: "image",
     load: loadImage,
-    ext: /png|jpg|gif/
+    ext: /\b(png|jpg|gif)\b/
   },
   {
     type: "style",
     load: loadStyle,
-    ext: /css/
+    ext: /\b(css)\b/
   },
   {
     type: "script",
     load: loadScript,
-    ext: /js/
+    ext: /\b(js)\b/
   },
   {
     view: "view",
     load: loadView,
-    ext: /html/
+    ext: /\b(html)\b/
   }
 ];
 
@@ -35,14 +35,14 @@ const LOADERS = [
 export const load = url => {
   const ext = url.split(".").pop();
   const loader = LOADERS.find(l => l.ext.test(ext));
-  if (!loader) {
-    throw `Loader for <${ext}> files has not been implemented`;
-  }
   return new Promise(resolve => {
+    if (!loader) {
+      throw `Loader for <${ext}> files has not been implemented`;
+    }
     if (!loader.cache) {
       loader.cache = {};
     }
-    loader.load(res => {
+    loader.load(url, res => {
       loader.cache[url] = res;
       resolve(res);
     });
