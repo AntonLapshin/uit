@@ -3,7 +3,7 @@ import { PubSub } from "./pubsub";
 
 class Item extends PubSub {
   update() {
-    this.fire("update");
+    return this.fire("update");
   }
 }
 
@@ -15,10 +15,8 @@ describe("PubSub", function() {
       count++;
     });
     item.update();
-    setTimeout(() => {
-      count.should.be.equal(1);
-      done();
-    }, 1);
+    count.should.be.equal(1);
+    done();
   });
 
   it("off", function(done) {
@@ -27,12 +25,11 @@ describe("PubSub", function() {
     const token = item.on("update", () => {
       count++;
     });
+    item.update();
     item.off(token);
     item.update();
-    setTimeout(() => {
-      count.should.be.equal(0);
-      done();
-    }, 1);
+    count.should.be.equal(1);
+    done();
   });
 
   it("once", function(done) {
@@ -43,9 +40,13 @@ describe("PubSub", function() {
     });
     item.update();
     item.update();
-    setTimeout(() => {
-      count.should.be.equal(1);
-      done();
-    }, 1);
+    count.should.be.equal(1);
+    done();
+  });
+
+  it("no event handlers", () => {
+    const item = new Item();
+    const result = item.update();
+    result.should.be.equal(false);
   });
 });

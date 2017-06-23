@@ -36,9 +36,7 @@ export class PubSub {
     if (!this.handlers.hasOwnProperty(eventName)) {
       return false;
     }
-    setTimeout(() => {
-      this.handlers[eventName].forEach(hh => hh.handler(arg1, arg2));
-    }, 0);
+    this.handlers[eventName].forEach(hh => hh.handler(arg1, arg2));
     return true;
   }
 

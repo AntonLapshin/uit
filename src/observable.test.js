@@ -13,11 +13,9 @@ describe("Observable", function() {
       count++;
     });
     item(11);
-    setTimeout(() => {
-      count.should.be.equal(1);
-      item().should.be.equal(11);
-      done();
-    }, 1);
+    count.should.be.equal(1);
+    item().should.be.equal(11);
+    done();
   });
 
   it("off", function(done) {
@@ -28,12 +26,11 @@ describe("Observable", function() {
     const token = item.on(() => {
       count++;
     });
-    item.off(token);
     item(11);
-    setTimeout(() => {
-      count.should.be.equal(0);
-      item().should.be.equal(11);
-      done();
-    }, 1);
+    item.off(token);
+    item(12);
+    count.should.be.equal(1);
+    item().should.be.equal(12);
+    done();
   });
 });
