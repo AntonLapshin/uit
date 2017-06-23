@@ -1,8 +1,8 @@
 import should from "should";
 import { Observable } from "./observable";
 
-describe("Observable", function() {
-  it("on", function(done) {
+describe("Observable", () => {
+  it("on", done => {
     const item = Observable(10);
     item().should.be.equal(10);
 
@@ -18,7 +18,7 @@ describe("Observable", function() {
     done();
   });
 
-  it("off", function(done) {
+  it("off", done => {
     const item = Observable(10);
     item().should.be.equal(10);
 

@@ -7,8 +7,8 @@ class Item extends PubSub {
   }
 }
 
-describe("PubSub", function() {
-  it("on", function(done) {
+describe("PubSub", () => {
+  it("on", done => {
     const item = new Item();
     let count = 0;
     item.on("update", () => {
@@ -19,7 +19,7 @@ describe("PubSub", function() {
     done();
   });
 
-  it("off", function(done) {
+  it("off", done => {
     const item = new Item();
     let count = 0;
     const token = item.on("update", () => {
@@ -32,7 +32,7 @@ describe("PubSub", function() {
     done();
   });
 
-  it("once", function(done) {
+  it("once", done => {
     const item = new Item();
     let count = 0;
     item.once("update", () => {

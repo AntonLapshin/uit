@@ -1,2 +1,0 @@
-gulp minify-js
-PAUSE
