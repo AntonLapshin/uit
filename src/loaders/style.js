@@ -3,6 +3,5 @@ export const loadStyle = (url, resolve) => {
   link.rel = "stylesheet";
   link.href = url;
   document.head.appendChild(link);
-  _styles[url] = link;
-  resolve();
+  resolve(link);
 };

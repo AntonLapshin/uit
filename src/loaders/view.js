@@ -5,8 +5,7 @@ export const loadView = (url, resolve) => {
     if (this.readyState !== 4 || this.status !== 200) {
       return;
     }
-    _views[url] = this.responseText;
-    resolve(_views[url]);
+    resolve(this.responseText);
   };
   xhr.send();
 };

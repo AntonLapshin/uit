@@ -29,16 +29,16 @@ const LOADERS = [
 
 /**
  * Loads an external resource
- * @param {string} ext - External resource's extension
  * @param {string} url - URL of the the external resource
  * @returns {Promise}
  */
-export const load = (ext, url) => {
+export const load = url => {
+  const ext = url.split(".").pop();
   const loader = LOADERS.find(l => l.ext.test(ext));
   if (!loader) {
     throw `Loader for <${ext}> files has not been implemented`;
   }
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (!loader.cache) {
       loader.cache = {};
     }
@@ -47,8 +47,11 @@ export const load = (ext, url) => {
       resolve(res);
     });
     setTimeout(() => {
+      if (loader.cache[url]) {
+        return;
+      }
       loader.cache[url] = true;
       resolve(true);
-    });
+    }, TIMEOUT);
   });
 };
