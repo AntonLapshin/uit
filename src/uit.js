@@ -2,10 +2,10 @@ import { opts } from "./block";
 import { PubSub } from "./pubsub";
 import { Observable } from "./observable";
 import { load } from "./loader";
-import { lookup } from "./lookup";
+import { lookup, blocks } from "./lookup";
 
 /**
- * Mount a block into DOM and looks for another blocks inside
+ * Mounts a block into DOM and looks for another blocks inside
  * @param {Element} el - Container
  * @param {string} name - Name of the component
  * @param {string} html - Input html string
@@ -13,7 +13,7 @@ import { lookup } from "./lookup";
  */
 const mount = (el, name, html) => {
   if (el instanceof Element !== true) {
-    throw "el is not Element";
+    throw "el is not an Element instance";
   }
   return loadBlock(name).then(() => {
     el.innerHTML = html;
@@ -46,19 +46,19 @@ const loadDeps = (name, deps) => {
  * @returns {Promise}
  */
 const loadBlock = name => {
-  if (_blocks[name]) {
-    return _blocks[name].promise;
+  if (blocks[name]) {
+    return blocks[name].promise;
   }
 
   return new Promise(resolve => {
-    uib.event.on(`${name}.load`, block => {
+    uit.event.on(`${name}.load`, block => {
       resolve(block);
     });
     loadDeps(name, ["logic.js"]);
   });
 };
 
-export const uib = {
+export const uit = {
   event: new PubSub(),
 
   Observable,
@@ -68,14 +68,14 @@ export const uib = {
    * @param {string} name - Name of the block
    * @param {Array} deps - List of all dependencies
    * @param {function} Logic - Logic of the component
-   * @returns {object} uib instance
+   * @returns {object} uit instance
    */
   define: (name, deps, Logic) => {
     const block = {
       name: name,
       deps: null
     };
-    _blocks[name] = block;
+    blocks[name] = block;
     block.promise = new Promise(resolve => {
       loadDeps(name, [
         "view.html",
@@ -87,7 +87,7 @@ export const uib = {
         block.logic = context => {
           Logic.apply(context, block.deps);
         };
-        uib.event.fire(`${name}.load`, block);
+        uit.event.fire(`${name}.load`, block);
         resolve(block);
       });
     });
@@ -126,10 +126,10 @@ export const uib = {
   /**
    * Adds an extension to the block's instance
    * @param {function} extension
-   * @returns {object} uib instance
+   * @returns {object} uit instance
    */
   addExtension: extension => {
     _extensions.push(extension);
-    return uib;
+    return uit;
   }
 };

@@ -17,7 +17,7 @@ const findAncestor = (el, selector) => {
   return el;
 };
 
-const _blocks = {};
+export const blocks = {};
 const _instances = {};
 
 /**
@@ -25,10 +25,10 @@ const _instances = {};
  * @param {Element} el Block element
  * @returns {Promise}
  */
-export const build = el => {
+const build = el => {
   return new Promise(resolve => {
     const name = el.getAttribute(opts.DATA_BLOCK_NAME_ATTRIBUTE);
-    const block = _blocks[name];
+    const block = blocks[name];
     if (!block.view) {
       throw `View of ${name} droplet is undefined`;
     }
