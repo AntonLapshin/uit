@@ -1,14 +1,15 @@
+export const DATA_BLOCK_ATTRIBUTE = "data-block";
 /**
  * TODOs: Add comments
  */
 import { PubSub } from "./pubsub";
 
 /**
- * Component's instance implementation
+ * Block's instance implementation
  */
-export class Instance extends PubSub {
+export class Block extends PubSub {
   /**
-   * Creates a component instance
+   * Creates a block's instance
    * @param {string} name Name of the component
    * @param {*} path The full path of the component
    * @param {*} el DOM element
@@ -18,7 +19,7 @@ export class Instance extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelector("*:not('[data-droplet]')");
+    this.elAll = el.querySelector(`*:not('[${DATA_BLOCK_ATTRIBUTE}]')`);
     this.children = {};
   }
 

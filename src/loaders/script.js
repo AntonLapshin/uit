@@ -15,7 +15,7 @@ export const loadScript = (url, resolve) => {
     // Others
     script.onload = function() {
       _scripts[url] = script;
-      resolve();
+      resolve(script);
     };
   }
 

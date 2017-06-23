@@ -4,36 +4,50 @@ import { loadScript } from "./loaders/script";
 import { loadView } from "./loaders/view";
 
 const TIMEOUT = 3000;
-const TYPES = {
-  image: {
-    loader: loadImage
+const LOADERS = [
+  {
+    type: "image",
+    load: loadImage,
+    ext: /png|jpg|gif/
   },
-  style: {
-    loader: loadStyle
+  {
+    type: "style",
+    load: loadStyle,
+    ext: /css/
   },
-  script: {
-    loader: loadScript
+  {
+    type: "script",
+    load: loadScript,
+    ext: /js/
   },
-  view: {
-    loader: loadView
+  {
+    view: "view",
+    load: loadView,
+    ext: /html/
   }
-};
+];
 
-export const load = (name, url) => {
-  const type = TYPES[name];
-  if (!type) {
-    throw `Type <${name}> is not supported`;
+/**
+ * Loads an external resource
+ * @param {string} ext - External resource's extension
+ * @param {string} url - URL of the the external resource
+ * @returns {Promise}
+ */
+export const load = (ext, url) => {
+  const loader = LOADERS.find(l => l.ext.test(ext));
+  if (!loader) {
+    throw `Loader for <${ext}> files has not been implemented`;
   }
   return new Promise((resolve, reject) => {
-    if (!type.container) {
-      type.container = {};
+    if (!loader.cache) {
+      loader.cache = {};
     }
-    type.loader(res => {
-      type.container[url] = res;
+    loader.load(res => {
+      loader.cache[url] = res;
       resolve(res);
     });
     setTimeout(() => {
-      type.container[url] = true;
+      loader.cache[url] = true;
       resolve(true);
     });
   });

@@ -1,7 +1,7 @@
 {
-  "name": "droplet.js",
+  "name": "ui-blocks",
   "version": "1.0.0",
-  "description": "Light-weight Single Page Application framework",
+  "description": "Building hierarchy of UI blocks",
   "main": "index.js",
   "directories": {
     "example": "example"
@@ -12,10 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AntonLapshin/droplet.js.git"
+    "url": "git+https://github.com/AntonLapshin/ui-blocks.git"
   },
   "keywords": [
-    "template",
+    "ui-blocks",
     "html-components",
     "light-weight",
     "modules",
@@ -25,9 +25,9 @@
   "author": "Anton Lapshin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AntonLapshin/droplet.js/issues"
+    "url": "https://github.com/AntonLapshin/ui-blocks/issues"
   },
-  "homepage": "https://github.com/AntonLapshin/droplet.js#readme",
+  "homepage": "https://github.com/AntonLapshin/ui-blocks#readme",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.25.0",
