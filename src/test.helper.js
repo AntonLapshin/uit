@@ -1,7 +1,7 @@
 global.Element =
   global.Element ||
   function(name, children) {
-    this.name = name;
+    this["data-block-name"] = name;
     return {
       querySelector: () => {
         return children;
@@ -17,6 +17,11 @@ global.Element =
       },
       style: {
         display: ""
+      },
+      classList: {
+        add: className => {
+          this[className] = true;
+        }
       }
     };
   };

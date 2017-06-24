@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run ES6 Tests",
+      "name": "Debug Mocha",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",

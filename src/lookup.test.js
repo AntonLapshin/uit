@@ -10,7 +10,16 @@ describe("Lookup", () => {
     ]);
 
     blocks["test"] = {
-      view: "<div></div>"
+      view: "<div></div>",
+      logic: ctx => {}
+    };
+    blocks["kid1"] = {
+      view: "<input />",
+      logic: ctx => {}
+    };
+    blocks["kid2"] = {
+      view: "<button></button>",
+      logic: ctx => {}
     };
 
     lookup(el).then(blockInstance => {
