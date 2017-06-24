@@ -2,7 +2,13 @@ import { opts } from "./block";
 import { matches } from "./lookup";
 import { rules } from "./rules";
 
+/**
+ * Data-binding feature implementation
+ */
 export function dataBind() {
+  if (!els || els.length === 0) {
+    return;
+  }
   const els = Array.prototype.filter.call(this.elAll, el => {
     return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
