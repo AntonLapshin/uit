@@ -41,7 +41,7 @@ global.document = {
   }
 };
 
-describe("loader", () => {
+describe("Loader", () => {
   it("image", done => {
     load("resources/test.jpg").then(img => {
       img.should.be.instanceof(Image);
