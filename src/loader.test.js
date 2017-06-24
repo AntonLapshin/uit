@@ -75,4 +75,15 @@ describe("Loader", () => {
       done();
     });
   });
+
+  it("timeout", done => {
+    class Image2 {
+      constructor() {}
+    }
+    global.Image = Image2;
+    load("resources/test.png").then(res => {
+      res.should.be.equal(true);
+      done();
+    });
+  });
 });

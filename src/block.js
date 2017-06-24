@@ -36,7 +36,7 @@ export class Block extends PubSub {
   }
 
   set(data) {
-    this.fire("set", data);
+    this.fire("set", data, this.olddata);
     this.olddata = this.data;
     this.data = data;
     return this;
