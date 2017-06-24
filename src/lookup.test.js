@@ -4,11 +4,6 @@ import helper from "./test.helper";
 
 describe("Lookup", () => {
   it("build", done => {
-    const el = new Element("test", [
-      new Element("kid1", []),
-      new Element("kid2", [])
-    ]);
-
     blocks["test"] = {
       view: "<div></div>",
       logic: ctx => {}
@@ -21,6 +16,11 @@ describe("Lookup", () => {
       view: "<button></button>",
       logic: ctx => {}
     };
+
+    const el = new Element("test", [
+      new Element("kid1", []),
+      new Element("kid2", [])
+    ]);
 
     lookup(el).then(blockInstance => {
       should.exist(blockInstance);

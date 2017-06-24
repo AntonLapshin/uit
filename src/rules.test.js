@@ -52,4 +52,44 @@ describe("Rules", () => {
     rules.prop.call(block, el, "prop");
     block.prop.should.be.equal(el);
   });
+  it("visible", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {
+      ctx.visible = new Observable(false);
+    });
+    rules.visible.call(block, el, "visible");
+    block.el.style.display = "none";
+    block.visible(true);
+    block.el.style.display = "";
+  });
+  it("invisible", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {
+      ctx.invisible = new Observable(true);
+    });
+    rules.invisible.call(block, el, "invisible");
+    block.el.style.display = "none";
+    block.invisible(false);
+    block.el.style.display = "";
+  });
+  it("enable", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {
+      ctx.enable = new Observable(false);
+    });
+    rules.enable.call(block, el, "enable");
+    block.el.classList.disabled.should.be.equal(true);
+    block.enable(true);
+    block.el.classList.disabled.should.be.equal(false);
+  });
+  it("disable", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {
+      ctx.disable = new Observable(true);
+    });
+    rules.disable.call(block, el, "disable");
+    block.el.classList.disabled.should.be.equal(true);
+    block.disable(false);
+    block.el.classList.disabled.should.be.equal(false);
+  });
 });

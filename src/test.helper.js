@@ -1,32 +1,43 @@
+const convert = name => {
+  return name.replace(/-/gi, "_");
+};
+
 global.Element =
   global.Element ||
   function(name, children) {
-    this["data-block-name"] = name;
-    return {
+    const el = {
+      data_block_name: name,
       querySelector: () => {
         return children;
       },
       getAttribute: name => {
-        return this[name];
+        return el[convert(name)];
       },
       findAncestor: () => {
         return null;
       },
       setAttribute: (name, value) => {
-        this[name] = value;
+        el[convert(name)] = value;
       },
       addAttribute: (name, value) => {
-        this[name] = value;
+        el[convert(name)] = value;
       },
       style: {
         display: ""
       },
       classList: {
         add: className => {
-          this[className] = true;
+          el.classList[className] = true;
+        },
+        toggle: (className, value) => {
+          el.classList[className] = value;
         }
+      },
+      matches: selector => {
+        return true;
       }
     };
+    return el;
   };
 
 class Image {

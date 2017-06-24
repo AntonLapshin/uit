@@ -10,6 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
       "args": [
         "${file}",
         "--require",
@@ -23,7 +24,7 @@
       "runtimeArgs": [
         "--nolazy"
       ],
-      "sourceMaps": true
+      "sourceMaps": false
     }
   ]
 }
