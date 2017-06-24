@@ -34,11 +34,13 @@ const build = el => {
     }
 
     const parentEl = findAncestor(el, `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]`);
-    const parentPath = parentEl.getAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE);
+    const parentPath = parentEl
+      ? parentEl.getAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE)
+      : "root";
     const call = el.getAttribute(opts.DATA_BLOCK_CALL_ATTRIBUTE);
     let path = combinePath(parentPath, name);
 
-    if (parentEl && parentPath) {
+    if (parentEl) {
       const parentBlock = _instances[parentPath];
       if (call === opts.CALL_BY_INDEX) {
         if (!parentBlock.children[name]) {
@@ -90,12 +92,6 @@ export const lookup = el => {
   const els = el.querySelector(
     `[${opts.DATA_BLOCK_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
   );
-
-  if (els.length === 0) {
-    return new Promise(resolve => {
-      resolve();
-    });
-  }
 
   const promises = Array.prototype.map.call(els, el => {
     return build(el);

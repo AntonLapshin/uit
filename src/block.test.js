@@ -1,16 +1,7 @@
 import should from "should";
 import { Block } from "./block";
+import helper from "./test.helper";
 
-global.Element = function() {
-  return {
-    querySelector: () => {
-      return new Element();
-    },
-    style: {
-      display: ""
-    }
-  };
-};
 describe("Block", () => {
   it("set", done => {
     const blockInstance = new Block("test", "test", new Element(), ctx => {

@@ -1,45 +1,6 @@
 import should from "should";
 import { load } from "./loader";
-
-class Image {
-  constructor() {
-    setTimeout(() => {
-      this.onload();
-    }, 1);
-  }
-}
-
-class XMLHttpRequest {
-  open() {}
-  send() {
-    this.responseText = "<div></div>";
-    this.readyState = 4;
-    this.status = 200;
-    this.onreadystatechange();
-  }
-}
-
-global.Image = Image;
-global.XMLHttpRequest = XMLHttpRequest;
-global.document = {
-  createElement: () => {
-    const obj = {};
-    setTimeout(() => {
-      obj.onload();
-    }, 1);
-    return obj;
-  },
-  head: {
-    appendChild: () => {}
-  },
-  getElementsByTagName: () => {
-    return [
-      {
-        appendChild: () => {}
-      }
-    ];
-  }
-};
+import helper from "./test.helper";
 
 describe("Loader", () => {
   it("image", done => {
