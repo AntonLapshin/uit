@@ -2,6 +2,7 @@
  * TODOs: Add comments
  */
 import { PubSub } from "./pubsub";
+import { dataBind } from "./data-bind";
 
 export const opts = {
   DATA_BLOCK_NAME_ATTRIBUTE: "data-block-name",
@@ -34,6 +35,7 @@ export class Block extends PubSub {
     );
     this.children = {};
     logic(this);
+    dataBind.call(this);
   }
 
   set(data) {

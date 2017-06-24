@@ -12,6 +12,9 @@ global.Element =
       findAncestor: () => {
         return null;
       },
+      setAttribute: (name, value) => {
+        this[name] = value;
+      },
       addAttribute: (name, value) => {
         this[name] = value;
       },

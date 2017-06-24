@@ -2,7 +2,7 @@ import { opts } from "./block";
 import { matches } from "./lookup";
 import { rules } from "./rules";
 
-export const dataBind = () => {
+export function dataBind() {
   const els = Array.prototype.filter.call(this.elAll, el => {
     return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
@@ -17,4 +17,4 @@ export const dataBind = () => {
       }
     });
   });
-};
+}

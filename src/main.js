@@ -3,9 +3,6 @@ import { PubSub } from "./pubsub";
 import { Observable } from "./observable";
 import { load } from "./loader";
 import { lookup, blocks } from "./lookup";
-import { dataBind } from "./data-bind";
-
-const extensions = [dataBind];
 
 /**
  * Mounts a block into DOM and looks for another blocks inside
@@ -129,13 +126,4 @@ export function run(container) {
   return this.append(name, container).then(instance => {
     instance.test();
   });
-}
-
-/**
- * Adds an extension to the block's instance
- * @param {function} extension
- * @returns {object} uit instance
- */
-export function addExtension(extension) {
-  extensions.push(extension);
 }

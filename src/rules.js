@@ -38,7 +38,7 @@ const getv = v => {
   return v.on ? v() : v;
 };
 
-const handle = (path, method) => {
+function handle(path, method) {
   let target;
 
   if (Array.isArray(path)) {
@@ -50,14 +50,14 @@ const handle = (path, method) => {
 
   const p = path.split(".");
   if (p[0] !== "data") {
-    target = getTarget(self, p);
+    target = getTarget(this, p);
     bind(target, method);
   } else {
     p.shift();
-    self.on("set", data => {
+    this.on("set", data => {
       window.setTimeout(() => {
         if (this.olddata) {
-          target = getTarget(self.olddata, p);
+          target = getTarget(this.olddata, p);
           unbind(target, method);
         }
         target = getTarget(data, p);
@@ -65,67 +65,67 @@ const handle = (path, method) => {
       }, 0);
     });
   }
-};
+}
 
 export const rules = {
-  src: (el, path) => {
+  src: function(el, path) {
     handle.call(this, path, v => {
       el.setAttribute("src", getv(v));
     });
   },
-  text: (el, path) => {
+  text: function(el, path) {
     handle.call(this, path, v => {
       el.textContent = getv(v);
     });
   },
-  class: (el, path, statement) => {
+  class: function(el, path, statement) {
     const className = statement.split(":")[2].trim();
     handle.call(this, path, v => {
       el.classList.toggle(className, getv(v));
     });
   },
-  href: (el, path) => {
+  href: function(el, path) {
     handle.call(this, path, v => {
       el.setAttribute("href", getv(v));
     });
   },
-  val: (el, path) => {
+  val: function(el, path) {
     handle.call(this, path, v => {
       el.value = getv(v);
     });
   },
-  html: (el, path) => {
+  html: function(el, path) {
     handle.call(this, path, v => {
       el.innerHTML = getv(v);
     });
   },
-  visible: (el, path) => {
+  visible: function(el, path) {
     handle.call(this, path, v => {
       el.style.display = !getv(v) ? "none" : "";
     });
   },
-  invisible: (el, path) => {
+  invisible: function(el, path) {
     handle.call(this, path, v => {
       el.style.display = !getv(v) ? "" : "none";
     });
   },
-  enable: (el, path) => {
+  enable: function(el, path) {
     handle.call(this, path, v => {
       el.classList.toggle("disabled", !getv(v));
     });
   },
-  disable: (el, path) => {
+  disable: function(el, path) {
     handle.call(this, path, v => {
       el.classList.toggle("disabled", getv(v));
     });
   },
-  click: (el, methodName) => {
+  click: function(el, methodName) {
     el.addEventListener("click", () => {
       this[methodName].call(this, el);
       return false;
     });
   },
-  prop: (el, value) => {
+  prop: function(el, value) {
     this[value] = el;
   }
 };
