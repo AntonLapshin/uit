@@ -3,7 +3,7 @@ import { Block, opts } from "./block";
 const combinePath = (parentPath, name) => {
   return `${parentPath ? parentPath + "+" : ""}${name}`;
 };
-const matches = (el, selector) => {
+export const matches = (el, selector) => {
   return (el.matches ||
     el.matchesSelector ||
     el.msMatchesSelector ||

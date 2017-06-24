@@ -39,12 +39,11 @@ const getv = v => {
 };
 
 const handle = (path, method) => {
-  const self = this;
   let target;
 
   if (Array.isArray(path)) {
     path.forEach(pathItem => {
-      handle.call(self, pathItem, method);
+      handle.call(this, pathItem, method);
     });
     return;
   }
@@ -57,7 +56,7 @@ const handle = (path, method) => {
     p.shift();
     self.on("set", data => {
       window.setTimeout(() => {
-        if (self.olddata) {
+        if (this.olddata) {
           target = getTarget(self.olddata, p);
           unbind(target, method);
         }
@@ -68,94 +67,65 @@ const handle = (path, method) => {
   }
 };
 
-export const Rules = {
-  title: function(el, path, statement) {
-    let place = statement.split(":")[2];
-    place = place ? place.trim() : "bottom-right";
-    handle.call(this, path, v => {
-      el.setAttribute("data-title", getv(v));
-      el.setAttribute("data-place", place);
-    });
-  },
-  src: function(el, path) {
+export const rules = {
+  src: (el, path) => {
     handle.call(this, path, v => {
       el.setAttribute("src", getv(v));
     });
   },
-  text: function(el, path) {
-    handle.call(this, path, function(v) {
+  text: (el, path) => {
+    handle.call(this, path, v => {
       el.textContent = getv(v);
     });
   },
-  class: function($e, path, statement) {
-    var className = statement.split(":")[2].trim();
-    handle.call(this, path, function(v) {
-      $e.toggleClass(className, getv(v));
+  class: (el, path, statement) => {
+    const className = statement.split(":")[2].trim();
+    handle.call(this, path, v => {
+      el.classList.toggle(className, getv(v));
     });
   },
-  sprite: function($e, path, statement) {
-    handle.call(this, path, function(v) {
-      $e.addClass(getv(v));
-    });
-  },
-  href: function($e, path) {
-    handle.call(this, path, function(v) {
+  href: (el, path) => {
+    handle.call(this, path, v => {
       el.setAttribute("href", getv(v));
     });
   },
-  val: function($e, path) {
-    handle.call(this, path, function(v) {
-      $e.val(getv(v));
+  val: (el, path) => {
+    handle.call(this, path, v => {
+      el.value = getv(v);
     });
   },
-  html: function($e, path) {
-    handle.call(this, path, function(v) {
+  html: (el, path) => {
+    handle.call(this, path, v => {
       el.innerHTML = getv(v);
     });
   },
-  visible: function($e, path) {
-    handle.call(this, path, function(v) {
-      $e[!getv(v) ? "hide" : "show"]();
+  visible: (el, path) => {
+    handle.call(this, path, v => {
+      el.style.display = !getv(v) ? "none" : "";
     });
   },
-  invisible: function($e, path) {
-    handle.call(this, path, function(v) {
-      $e[!getv(v) ? "show" : "hide"]();
+  invisible: (el, path) => {
+    handle.call(this, path, v => {
+      el.style.display = !getv(v) ? "" : "none";
     });
   },
-  enable: function($e, path) {
-    handle.call(this, path, function(v) {
-      $e.toggleClass("disabled", !getv(v));
+  enable: (el, path) => {
+    handle.call(this, path, v => {
+      el.classList.toggle("disabled", !getv(v));
     });
   },
-  disable: function($e, path) {
-    handle.call(this, path, function(v) {
-      $e.toggleClass("disabled", getv(v));
+  disable: (el, path) => {
+    handle.call(this, path, v => {
+      el.classList.toggle("disabled", getv(v));
     });
   },
-  click: function($e, methodName) {
-    var self = this;
-    $e.click(function() {
-      self[methodName].call(self, $e);
+  click: (el, methodName) => {
+    el.addEventListener("click", () => {
+      this[methodName].call(this, el);
       return false;
     });
   },
-  click2: function($e, methodName) {
-    var self = this;
-    $e.click(function() {
-      self[methodName].call(self, $e);
-    });
-  },
-  fire: function($e, event) {
-    $e.click(function() {
-      Droplet.fire(event);
-      return false;
-    });
-  },
-  place: function($e, value) {
-    $e.attr("data-placement", value);
-  },
-  prop: function($e, value) {
-    this["$" + value] = $e;
+  prop: (el, value) => {
+    this[value] = el;
   }
 };

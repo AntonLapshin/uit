@@ -8,6 +8,7 @@ export const opts = {
   DATA_BLOCK_READY_ATTRIBUTE: "data-block-ready",
   DATA_BLOCK_PATH_ATTRIBUTE: "data-block-path",
   DATA_BLOCK_CALL_ATTRIBUTE: "data-block-call",
+  DATA_BIND_ATTRIBUTE: "data-bind",
   CALL_BY_INDEX: "byIndex",
   BASE_URL: "./blocks/"
 };
