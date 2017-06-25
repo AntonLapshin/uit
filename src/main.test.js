@@ -20,8 +20,6 @@ describe("Main", () => {
       block.view.should.be.equal("<div></div>");
       done();
     });
-    define("test", [], ctx => {
-      ctx.version = 1;
-    });
+    define("test", []);
   });
 });

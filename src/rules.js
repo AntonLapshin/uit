@@ -50,19 +50,17 @@ function handle(path, method) {
 
   const p = path.split(".");
   if (p[0] !== "data") {
-    target = getTarget(this, p);
+    target = getTarget(this, [...p]);
     bind(target, method);
   } else {
     p.shift();
     this.on("set", data => {
-      window.setTimeout(() => {
-        if (this.olddata) {
-          target = getTarget(this.olddata, p);
-          unbind(target, method);
-        }
-        target = getTarget(data, p);
-        bind(target, method);
-      }, 0);
+      if (this.olddata) {
+        target = getTarget(this.olddata, [...p]);
+        unbind(target, method);
+      }
+      target = getTarget(data, [...p]);
+      bind(target, method);
     });
   }
 }

@@ -7,10 +7,7 @@ global.Element =
   function(name, children) {
     this.children = children;
     this.data_block_name = name;
-    this.querySelector = selector => {
-      // if (selector.indexOf("data-bind")) {
-      //   return [];
-      // }
+    this.querySelector = () => {
       if (this.innerHTML && this.innerHTML.indexOf("test") > -1) {
         return [new Element("test")];
       }
@@ -18,9 +15,6 @@ global.Element =
     };
     this.getAttribute = name => {
       return this[convert(name)];
-    };
-    this.findAncestor = () => {
-      return null;
     };
     this.setAttribute = (name, value) => {
       this[convert(name)] = value;
@@ -39,7 +33,7 @@ global.Element =
         this.classList[className] = value;
       }
     };
-    this.matches = selector => {
+    this.matches = () => {
       return true;
     };
   };

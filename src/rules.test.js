@@ -15,6 +15,16 @@ describe("Rules", () => {
     block.src("resource/test.png");
     el.getAttribute("src").should.be.equal("resource/test.png");
   });
+  it("src via data", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {});
+    rules.src.call(block, el, "data.src");
+    should.not.exist(el.getAttribute("src"));
+    block.set({ src: "resource/test.png" });
+    el.getAttribute("src").should.be.equal("resource/test.png");
+    block.set({ src: "2" });
+    el.getAttribute("src").should.be.equal("2");
+  });
   it("text", () => {
     const el = new Element("test", []);
     const block = new Block("test", null, el, ctx => {
