@@ -38,6 +38,11 @@ export class Block extends PubSub {
     dataBind.call(this);
   }
 
+  /**
+   * Sets data to the block instance
+   * @param {object} data 
+   * @returns {Block} instance
+   */
   set(data) {
     this.olddata = this.data;
     this.data = data;
@@ -45,23 +50,39 @@ export class Block extends PubSub {
     return this;
   }
 
+  /**
+   * Fires load event
+   * @returns {Block} instance
+   */
   load() {
     this.fire("load");
     return this;
   }
 
+  /**
+   * Shows element
+   * @returns {Block} instance
+   */
   show() {
     this.el.style.display = "";
     this.fire("show");
     return this;
   }
 
+  /**
+   * Hides element
+   * @returns {Block} instance
+   */
   hide() {
     this.el.style.display = "none";
     this.fire("hide");
     return this;
   }
 
+  /**
+   * Tests element
+   * @returns {Block} instance
+   */
   test() {
     this.el.style.display = "none";
     this.fire("test");

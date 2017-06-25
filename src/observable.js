@@ -1,7 +1,6 @@
 /**
  * Typical implementation of the Observable variables
  */
-
 import { PubSub } from "./pubsub";
 
 class ObservableValue extends PubSub {
@@ -36,9 +35,19 @@ export const Observable = data => {
     return ObservableBehavior;
   };
 
+  /**
+   * Subscribes on variable's changes
+   * @param {function} handler - Event Handler
+   * @returns {number} - token
+   */
   ObservableBehavior.on = h => {
     return value.on(h);
   };
+  /**
+   * Unsubscribes from variable's changes
+   * @param {number} token - Token for unsubscribe
+   * @returns {boolean} - Result
+   */
   ObservableBehavior.off = token => {
     return value.off(token);
   };

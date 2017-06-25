@@ -1,6 +1,5 @@
 import { opts } from "./block";
 import { PubSub } from "./pubsub";
-import { Observable } from "./observable";
 import { load } from "./loader";
 import { lookup, blocks } from "./lookup";
 
@@ -9,7 +8,7 @@ import { lookup, blocks } from "./lookup";
  * @param {Element} el - Container
  * @param {string} name - Name of the component
  * @param {string} html - Input html string
- * @returns {Promise}
+ * @returns {Promise<Block[]>} - List of mounted blocks
  * @ignore
  */
 const mount = (el, name, html) => {
@@ -26,7 +25,7 @@ const mount = (el, name, html) => {
  * Loads all component's dependencies
  * @param {string} name - Name of the component
  * @param {Array} deps - List of the dependencies
- * @returns {Promise}
+ * @returns {Promise<object[]>} - List of the loaded dependencies
  * @ignore
  */
 const loadDeps = (name, deps) => {
@@ -45,7 +44,7 @@ const loadDeps = (name, deps) => {
 /**
  * Loads logic + view + style. The define method is called after loading
  * @param {string} name - Name of the component
- * @returns {Promise}
+ * @returns {Promise<object>} - Block definition
  * @ignore
  */
 const loadBlock = name => {
@@ -69,7 +68,7 @@ export const event = new PubSub();
 /**
  * Observable class
  */
-export const ob = Observable;
+export { Observable } from "./observable";
 
 /**
  * Defines a new component (block)
@@ -100,7 +99,7 @@ export function define(name, deps, Logic) {
  * Loads and appends a droplet into container
  * @param {selector|string|Element} el - Container
  * @param {string} name - Name of the block
- * @returns {Promise}
+ * @returns {Promise<Block[]>} - List of the added block instances
  */
 export function append(el, name) {
   return mount(
@@ -113,7 +112,7 @@ export function append(el, name) {
 /**
  * Runs the environment by the selected block via search string
  * @param {selector|string|Element} el - Container
- * @returns {Promise}
+ * @returns {Promise<Block[]>} - List of the added block instances
  */
 export function run(el) {
   const search = window.location.search;
