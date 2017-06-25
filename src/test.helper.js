@@ -7,7 +7,7 @@ global.Element =
   function(name, children) {
     this.children = children;
     this.data_block_name = name;
-    this.querySelector = () => {
+    this.querySelectorAll = () => {
       if (this.innerHTML && this.innerHTML.indexOf("test") > -1) {
         return [new Element("test")];
       }
@@ -17,9 +17,6 @@ global.Element =
       return this[convert(name)];
     };
     this.setAttribute = (name, value) => {
-      this[convert(name)] = value;
-    };
-    this.addAttribute = (name, value) => {
       this[convert(name)] = value;
     };
     this.style = {

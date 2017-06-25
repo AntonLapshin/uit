@@ -134,8 +134,8 @@ const build = el => {
     }
 
     el.classList.add(name);
-    el.addAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
-    el.addAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
+    el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
+    el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
     el.innerHTML = block.view;
 
     const blockInstance = new Block(name, path, el, block.logic);
@@ -166,9 +166,10 @@ const build = el => {
  * @returns {Promise}
  */
 const lookup = el => {
-  const els = el.querySelector(
-    `[${opts.DATA_BLOCK_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
-  );
+  const els =
+    el.querySelectorAll(
+      `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
+    ) || [];
 
   const promises = Array.prototype.map.call(els, el => {
     return build(el);
@@ -397,8 +398,8 @@ class Block extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelector(
-      `*:not('[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]')`
+    this.elAll = el.querySelectorAll(
+      `*:not([${opts.DATA_BLOCK_NAME_ATTRIBUTE}])`
     );
     this.children = {};
     logic(this);
@@ -451,7 +452,7 @@ class Block extends PubSub {
    * @returns {Block} instance
    */
   test() {
-    this.el.style.display = "none";
+    this.el.style.display = "";
     this.fire("test");
     return this;
   }
@@ -489,7 +490,9 @@ const loadView = (url, resolve) => {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function() {
-    resolve(this.responseText);
+    if (xhr.readyState === 4 && xhr.responseText.length > 0) {
+      resolve(xhr.responseText);
+    }
   };
   xhr.send();
 };
@@ -497,22 +500,18 @@ const loadView = (url, resolve) => {
 const TIMEOUT = 3000;
 const LOADERS = [
   {
-    type: "image",
     load: loadImage,
     ext: /\b(png|jpg|gif)\b/
   },
   {
-    type: "style",
     load: loadStyle,
     ext: /\b(css)\b/
   },
   {
-    type: "script",
     load: loadScript,
     ext: /\b(js)\b/
   },
   {
-    view: "view",
     load: loadView,
     ext: /\b(html)\b/
   }
@@ -628,7 +627,7 @@ const mount = (el, name, html) => {
  * @ignore
  */
 const loadDeps = (name, deps) => {
-  const baseUrl = opts.BASE_URL + "/" + name;
+  const baseUrl = opts.BASE_URL + name + "/";
   const promises = deps.map(dep => {
     if (dep.indexOf(".") === -1) {
       return loadBlock(dep);

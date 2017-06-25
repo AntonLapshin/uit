@@ -29,7 +29,7 @@ const mount = (el, name, html) => {
  * @ignore
  */
 const loadDeps = (name, deps) => {
-  const baseUrl = opts.BASE_URL + "/" + name;
+  const baseUrl = opts.BASE_URL + name + "/";
   const promises = deps.map(dep => {
     if (dep.indexOf(".") === -1) {
       return loadBlock(dep);

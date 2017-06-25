@@ -6,22 +6,18 @@ import { loadView } from "./loaders/view";
 const TIMEOUT = 3000;
 const LOADERS = [
   {
-    type: "image",
     load: loadImage,
     ext: /\b(png|jpg|gif)\b/
   },
   {
-    type: "style",
     load: loadStyle,
     ext: /\b(css)\b/
   },
   {
-    type: "script",
     load: loadScript,
     ext: /\b(js)\b/
   },
   {
-    view: "view",
     load: loadView,
     ext: /\b(html)\b/
   }

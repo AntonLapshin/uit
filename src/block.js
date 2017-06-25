@@ -30,8 +30,8 @@ export class Block extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelector(
-      `*:not('[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]')`
+    this.elAll = el.querySelectorAll(
+      `*:not([${opts.DATA_BLOCK_NAME_ATTRIBUTE}])`
     );
     this.children = {};
     logic(this);
@@ -84,7 +84,7 @@ export class Block extends PubSub {
    * @returns {Block} instance
    */
   test() {
-    this.el.style.display = "none";
+    this.el.style.display = "";
     this.fire("test");
     return this;
   }

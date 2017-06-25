@@ -57,8 +57,8 @@ const build = el => {
     }
 
     el.classList.add(name);
-    el.addAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
-    el.addAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
+    el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
+    el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
     el.innerHTML = block.view;
 
     const blockInstance = new Block(name, path, el, block.logic);
@@ -89,9 +89,10 @@ const build = el => {
  * @returns {Promise}
  */
 export const lookup = el => {
-  const els = el.querySelector(
-    `[${opts.DATA_BLOCK_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
-  );
+  const els =
+    el.querySelectorAll(
+      `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
+    ) || [];
 
   const promises = Array.prototype.map.call(els, el => {
     return build(el);
