@@ -84,15 +84,11 @@ export function define(name, deps, Logic) {
   };
   blocks[name] = block;
   block.promise = new Promise(resolve => {
-    loadDeps(name, [
-      "view.html",
-      "style.css",
-      ...deps
-    ]).then((view, ...args) => {
-      block.view = view;
+    loadDeps(name, ["view.html", "style.css", ...deps]).then(args => {
+      block.view = args[0];
       block.deps = args;
       block.logic = context => {
-        Logic.apply(context, block.deps);
+        Logic.call(context, context, block.deps);
       };
       event.fire(`${name}.load`, block);
       resolve(block);
@@ -102,13 +98,13 @@ export function define(name, deps, Logic) {
 
 /**
  * Loads and appends a droplet into container
+ * @param {selector|string|Element} el - Container
  * @param {string} name - Name of the block
- * @param {selector|string|Element} container - Container
  * @returns {Promise}
  */
-export function append(name, container) {
+export function append(el, name) {
   return mount(
-    container,
+    el,
     name,
     `<div ${opts.DATA_BLOCK_NAME_ATTRIBUTE}="${name}"></div>`
   );
@@ -116,14 +112,15 @@ export function append(name, container) {
 
 /**
  * Runs the environment by the selected block via search string
- * @param {selector|string|Element} container
+ * @param {selector|string|Element} el - Container
  * @returns {Promise}
  */
-export function run(container) {
+export function run(el) {
   const search = window.location.search;
   const name = search.length > 0 ? search.substring(1) : null;
 
-  return this.append(name, container).then(instance => {
-    instance.test();
+  return append(el, name).then(instances => {
+    instances[0].test();
+    return instances;
   });
 }

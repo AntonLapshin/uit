@@ -5,39 +5,43 @@ const convert = name => {
 global.Element =
   global.Element ||
   function(name, children) {
-    const el = {
-      data_block_name: name,
-      querySelector: () => {
-        return children;
+    this.children = children;
+    this.data_block_name = name;
+    this.querySelector = selector => {
+      // if (selector.indexOf("data-bind")) {
+      //   return [];
+      // }
+      if (this.innerHTML && this.innerHTML.indexOf("test") > -1) {
+        return [new Element("test")];
+      }
+      return this.children || [];
+    };
+    this.getAttribute = name => {
+      return this[convert(name)];
+    };
+    this.findAncestor = () => {
+      return null;
+    };
+    this.setAttribute = (name, value) => {
+      this[convert(name)] = value;
+    };
+    this.addAttribute = (name, value) => {
+      this[convert(name)] = value;
+    };
+    this.style = {
+      display: ""
+    };
+    this.classList = {
+      add: className => {
+        this.classList[className] = true;
       },
-      getAttribute: name => {
-        return el[convert(name)];
-      },
-      findAncestor: () => {
-        return null;
-      },
-      setAttribute: (name, value) => {
-        el[convert(name)] = value;
-      },
-      addAttribute: (name, value) => {
-        el[convert(name)] = value;
-      },
-      style: {
-        display: ""
-      },
-      classList: {
-        add: className => {
-          el.classList[className] = true;
-        },
-        toggle: (className, value) => {
-          el.classList[className] = value;
-        }
-      },
-      matches: selector => {
-        return true;
+      toggle: (className, value) => {
+        this.classList[className] = value;
       }
     };
-    return el;
+    this.matches = selector => {
+      return true;
+    };
   };
 
 class Image {
@@ -64,7 +68,7 @@ global.document = global.document || {
   createElement: () => {
     const obj = {};
     setTimeout(() => {
-      obj.onload();
+      obj.onload && obj.onload();
     }, 1);
     return obj;
   },
@@ -77,5 +81,11 @@ global.document = global.document || {
         appendChild: () => {}
       }
     ];
+  }
+};
+
+global.window = {
+  location: {
+    search: "?test"
   }
 };

@@ -30,7 +30,7 @@ const build = el => {
     const name = el.getAttribute(opts.DATA_BLOCK_NAME_ATTRIBUTE);
     const block = blocks[name];
     if (!block.view) {
-      throw `View of ${name} droplet is undefined`;
+      throw `View of ${name} block is undefined`;
     }
 
     const parentEl = findAncestor(el, `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]`);

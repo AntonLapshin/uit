@@ -6,24 +6,15 @@ describe("Lookup", () => {
   it("build", done => {
     blocks["test"] = {
       view: "<div></div>",
-      logic: ctx => {}
-    };
-    blocks["kid1"] = {
-      view: "<input />",
-      logic: ctx => {}
-    };
-    blocks["kid2"] = {
-      view: "<button></button>",
-      logic: ctx => {}
+      logic: ctx => {
+        ctx.version = 1;
+      }
     };
 
-    const el = new Element("test", [
-      new Element("kid1", []),
-      new Element("kid2", [])
-    ]);
+    const el = new Element(undefined, [new Element("test", [])]);
 
-    lookup(el).then(blockInstance => {
-      should.exist(blockInstance);
+    lookup(el).then(blockInstances => {
+      blockInstances[0].version.should.be.equal(1);
       done();
     });
   });
