@@ -50,6 +50,6 @@ describe("Block", () => {
       ctx.version = 1;
     });
     blockInstance.test();
-    blockInstance.el.style.display.should.be.equal("none");
+    blockInstance.el.style.display.should.be.equal("");
   });
 });
