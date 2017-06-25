@@ -4,7 +4,8 @@ import uglify from "rollup-plugin-uglify";
 
 export default {
   entry: "src/main.js",
-  format: "cjs",
+  format: "umd",
+  moduleName: "uit",
   plugins: [
     resolve(),
     babel({
@@ -22,7 +23,19 @@ export default {
       plugins: ["external-helpers"],
       exclude: "node_modules/**" // only transpile our source code
     }),
-    uglify()
+    uglify({
+      mangle: true,
+      compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+      }
+    })
   ],
-  dest: "dist/uit.min.js"
+  dest: "bin/uit.min.js"
 };

@@ -12,7 +12,9 @@
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "jsdoc2md": "./node_modules/.bin/jsdoc2md src/*.js > api.md",
     "commit": "./node_modules/.bin/git-cz",
-    "build": "./node_modules/.bin/rollup -c rollup.config.js"
+    "build-dev": "./node_modules/.bin/rollup -c rollup.dev.config.js",
+    "build-prod": "./node_modules/.bin/rollup -c rollup.config.js",
+    "build": "npm run build-dev && npm run build-prod"
   },
   "repository": {
     "type": "git",
