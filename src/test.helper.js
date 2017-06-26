@@ -38,6 +38,15 @@ global.Element =
     this.matches = () => {
       return true;
     };
+    this.appendChild = item => {
+      this.innerHTML = (this.innerHTML || "") + item;
+    };
+    const self = this;
+    Object.defineProperty(this, "firstChild", {
+      get: function() {
+        return self.innerHTML;
+      }
+    });
   };
 
 class Image {
@@ -61,7 +70,10 @@ class XMLHttpRequest {
 global.Image = global.Image || Image;
 global.XMLHttpRequest = global.XMLHttpRequest || XMLHttpRequest;
 global.document = global.document || {
-  createElement: () => {
+  createElement: type => {
+    if (type === "div") {
+      return new Element("div", []);
+    }
     const obj = {};
     setTimeout(() => {
       obj.onload && obj.onload();

@@ -1,6 +1,6 @@
 # uit
 
-Ultra small JavaScript UI library for building UI components.
+Ultra small JavaScript library for building hierarchy of UI components
 
 [![Build Status](https://travis-ci.org/AntonLapshin/uit.svg?branch=master)](https://travis-ci.org/AntonLapshin/uit)
 [![Coveralls Status](https://coveralls.io/repos/github/AntonLapshin/uit/badge.svg?branch=master&v=2)](https://coveralls.io/github/AntonLapshin/uit?branch=master)

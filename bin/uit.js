@@ -178,9 +178,6 @@ const lookup = el => {
 };
 
 const getTarget = (ctx, p) => {
-  if (ctx == null) {
-    return null;
-  }
   if (p.length === 0) {
     return ctx;
   }
@@ -190,9 +187,6 @@ const getTarget = (ctx, p) => {
 };
 
 const bind = (target, method) => {
-  if (target == null) {
-    return;
-  }
   if (target.on) {
     target.on(method);
     method(target());
@@ -202,9 +196,6 @@ const bind = (target, method) => {
 };
 
 const unbind = (target, method) => {
-  if (target == null) {
-    return;
-  }
   if (target.off) {
     target.off(method);
   }
@@ -219,13 +210,6 @@ const getv = v => {
 
 function handle(path, method) {
   let target;
-
-  if (Array.isArray(path)) {
-    path.forEach(pathItem => {
-      handle.call(this, pathItem, method);
-    });
-    return;
-  }
 
   const p = path.split(".");
   if (p[0] !== "data") {
@@ -614,7 +598,10 @@ const mount = (el, name, html) => {
     throw "el is not an Element instance";
   }
   return loadBlock(name).then(() => {
-    el.innerHTML = html;
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const item = temp.firstChild;
+    el.appendChild(item);
     return lookup(el);
   });
 };

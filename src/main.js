@@ -16,7 +16,10 @@ const mount = (el, name, html) => {
     throw "el is not an Element instance";
   }
   return loadBlock(name).then(() => {
-    el.innerHTML = html;
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const item = temp.firstChild;
+    el.appendChild(item);
     return lookup(el);
   });
 };
