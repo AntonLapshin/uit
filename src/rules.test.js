@@ -25,6 +25,26 @@ describe("Rules", () => {
     block.set({ src: "2" });
     el.getAttribute("src").should.be.equal("2");
   });
+  it("href", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {});
+    rules.href.call(block, el, "data.href");
+    should.not.exist(el.getAttribute("href"));
+    block.set({ href: "resource/test.png" });
+    el.getAttribute("href").should.be.equal("resource/test.png");
+    block.set({ href: "1" });
+    el.getAttribute("href").should.be.equal("1");
+  });
+  it("click", done => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {
+      ctx.clickHandler = function(el) {
+        should.exist(el);
+        done();
+      };
+    });
+    rules.click.call(block, el, "clickHandler");
+  });
   it("text", () => {
     const el = new Element("test", []);
     const block = new Block("test", null, el, ctx => {
@@ -34,6 +54,28 @@ describe("Rules", () => {
     should.not.exist(el.textContent);
     block.text("Some text");
     el.textContent.should.be.equal("Some text");
+  });
+  it("text via binding", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {});
+    rules.text.call(block, el, "data.text");
+    should.not.exist(el.textContent);
+    block.set({ text: new Observable("Some text") });
+    el.textContent.should.be.equal("Some text");
+    block.set({ text: new Observable("Some text 2") });
+  });
+  it("class", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {});
+    rules.class.call(
+      block,
+      el,
+      "data.completed",
+      "class: data.completed: completed"
+    );
+    should.not.exist(el.classList.completed);
+    block.set({ completed: true });
+    el.classList.completed.should.be.equal(true);
   });
   it("html", () => {
     const el = new Element("test", []);

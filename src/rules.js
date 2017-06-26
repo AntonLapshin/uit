@@ -1,7 +1,4 @@
 const getTarget = (ctx, p) => {
-  if (ctx == null) {
-    return null;
-  }
   if (p.length === 0) {
     return ctx;
   }
@@ -11,9 +8,6 @@ const getTarget = (ctx, p) => {
 };
 
 const bind = (target, method) => {
-  if (target == null) {
-    return;
-  }
   if (target.on) {
     target.on(method);
     method(target());
@@ -23,9 +17,6 @@ const bind = (target, method) => {
 };
 
 const unbind = (target, method) => {
-  if (target == null) {
-    return;
-  }
   if (target.off) {
     target.off(method);
   }
@@ -40,13 +31,6 @@ const getv = v => {
 
 function handle(path, method) {
   let target;
-
-  if (Array.isArray(path)) {
-    path.forEach(pathItem => {
-      handle.call(this, pathItem, method);
-    });
-    return;
-  }
 
   const p = path.split(".");
   if (p[0] !== "data") {

@@ -30,6 +30,11 @@ global.Element =
         this.classList[className] = value;
       }
     };
+    this.addEventListener = (event, handler) => {
+      setTimeout(() => {
+        handler();
+      }, 0);
+    };
     this.matches = () => {
       return true;
     };
