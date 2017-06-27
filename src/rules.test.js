@@ -77,6 +77,14 @@ describe("Rules", () => {
     block.set({ completed: true });
     el.classList.completed.should.be.equal(true);
   });
+  it("attr", () => {
+    const el = new Element("test", []);
+    const block = new Block("test", null, el, ctx => {});
+    rules.attr.call(block, el, "data.id", "attr: data.id: id");
+    should.not.exist(el.id);
+    block.set({ id: "element_1" });
+    el.id.should.be.equal("element_1");
+  });
   it("html", () => {
     const el = new Element("test", []);
     const block = new Block("test", null, el, ctx => {

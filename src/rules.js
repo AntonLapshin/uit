@@ -79,6 +79,15 @@ export const rules = {
     });
   },
   /**
+   * [attr] binding
+   */
+  attr: function(el, path, statement) {
+    const attrName = statement.split(":")[2].trim();
+    handle.call(this, path, v => {
+      el.setAttribute(attrName, getv(v));
+    });
+  },
+  /**
    * [href] attribute binding
    */
   href: function(el, path) {
