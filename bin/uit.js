@@ -133,7 +133,7 @@ const build = el => {
       }
     }
 
-    el.classList.add(name);
+    el.classList.add(`_${name}`);
     el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
     el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
     el.innerHTML = block.view;
@@ -255,6 +255,15 @@ const rules = {
     const className = statement.split(":")[2].trim();
     handle.call(this, path, v => {
       el.classList.toggle(className, getv(v));
+    });
+  },
+  /**
+   * [attr] binding
+   */
+  attr: function(el, path, statement) {
+    const attrName = statement.split(":")[2].trim();
+    handle.call(this, path, v => {
+      el.setAttribute(attrName, getv(v));
     });
   },
   /**

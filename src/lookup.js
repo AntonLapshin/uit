@@ -56,7 +56,7 @@ const build = el => {
       }
     }
 
-    el.classList.add(name);
+    el.classList.add(`_${name}`);
     el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
     el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
     el.innerHTML = block.view;
