@@ -11,6 +11,11 @@ global.Element =
       if (this.innerHTML && this.innerHTML.indexOf("test") > -1) {
         return [new Element("test")];
       }
+      if (this.innerHTML && this.innerHTML.indexOf("child") > -1) {
+        const child = new Element("child");
+        child.parentElement = this;
+        return [child];
+      }
       return this.children || [];
     };
     this.getAttribute = name => {

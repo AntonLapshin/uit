@@ -123,8 +123,7 @@ export function run(el) {
   const search = window.location.search;
   const name = search.length > 0 ? search.substring(1) : null;
 
-  return append(el, name).then(function(result) {
-    const instance = result[0];
+  return append(el, name).then(instance => {
     if (window.uitDebug) {
       return window.uitDebug.debug(instance);
     }

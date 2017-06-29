@@ -13,7 +13,9 @@ export function dataBind() {
     return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
   els.forEach(el => {
-    const statements = el.getAttribute(opts.DATA_BIND_ATTRIBUTE).split(",");
+    const bindAttr = el.getAttribute(opts.DATA_BIND_ATTRIBUTE);
+    if (!bindAttr) return;
+    const statements = bindAttr.split(",");
     statements.forEach(statement => {
       const parts = statement.split(":");
       const key = parts[0].trim();

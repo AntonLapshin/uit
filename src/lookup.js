@@ -97,5 +97,7 @@ export const lookup = el => {
   const promises = Array.prototype.map.call(els, el => {
     return build(el);
   });
-  return Promise.all(promises);
+  return Promise.all(promises).then(result => {
+    return result[0];
+  });
 };

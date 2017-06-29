@@ -174,7 +174,9 @@ const lookup = el => {
   const promises = Array.prototype.map.call(els, el => {
     return build(el);
   });
-  return Promise.all(promises);
+  return Promise.all(promises).then(result => {
+    return result[0];
+  });
 };
 
 const getTarget = (ctx, p) => {
@@ -350,7 +352,9 @@ function dataBind() {
     return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
   els.forEach(el => {
-    const statements = el.getAttribute(opts.DATA_BIND_ATTRIBUTE).split(",");
+    const bindAttr = el.getAttribute(opts.DATA_BIND_ATTRIBUTE);
+    if (!bindAttr) return;
+    const statements = bindAttr.split(",");
     statements.forEach(statement => {
       const parts = statement.split(":");
       const key = parts[0].trim();
@@ -707,8 +711,7 @@ function run(el) {
   const search = window.location.search;
   const name = search.length > 0 ? search.substring(1) : null;
 
-  return append(el, name).then(function(result) {
-    const instance = result[0];
+  return append(el, name).then(instance => {
     if (window.uitDebug) {
       return window.uitDebug.debug(instance);
     }
