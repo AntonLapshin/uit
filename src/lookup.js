@@ -1,19 +1,10 @@
 import { Block, opts } from "./block";
 
 const combinePath = (parentPath, name) => {
-  return `${parentPath ? parentPath + "+" : ""}${name}`;
-};
-export const matches = (el, selector) => {
-  return (el.matches ||
-    el.matchesSelector ||
-    el.msMatchesSelector ||
-    el.mozMatchesSelector ||
-    el.webkitMatchesSelector ||
-    el.oMatchesSelector)
-    .call(el, selector);
+  return `${parentPath}+${name}`;
 };
 const findAncestor = (el, selector) => {
-  while ((el = el.parentElement) && !matches(el, selector));
+  while ((el = el.parentElement) && !el.matches(selector));
   return el;
 };
 
@@ -89,10 +80,9 @@ const build = el => {
  * @returns {Promise}
  */
 export const lookup = el => {
-  const els =
-    el.querySelectorAll(
-      `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
-    ) || [];
+  const els = el.querySelectorAll(
+    `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
+  );
 
   const promises = Array.prototype.map.call(els, el => {
     return build(el);

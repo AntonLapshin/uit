@@ -34,18 +34,15 @@ const debugTemplate = `
   </div>      
 `;
 
-const debounce = (func, wait, immediate) => {
+const debounce = (func, wait) => {
   let timeout;
   return function() {
     const context = this;
     const args = arguments;
     const later = function() {
       timeout = null;
-      if (!immediate) {
-        func.apply(context, args);
-      }
     };
-    const callNow = immediate && !timeout;
+    const callNow = !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
     if (callNow) {

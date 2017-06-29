@@ -1,5 +1,4 @@
 import { opts } from "./block";
-import { matches } from "./lookup";
 import { rules } from "./rules";
 
 /**
@@ -10,7 +9,7 @@ export function dataBind() {
     return;
   }
   const els = Array.prototype.filter.call(this.elAll, el => {
-    return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
+    return el.matches(`[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
   els.forEach(el => {
     const bindAttr = el.getAttribute(opts.DATA_BIND_ATTRIBUTE);
