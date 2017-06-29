@@ -7,8 +7,8 @@
     "example": "example"
   },
   "scripts": {
-    "test-0": "./node_modules/.bin/mocha --require babel-register ./src/**/*.test.js --timeout 5000",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- ./src/ --require babel-register --timeout 5000",
+    "test-0": "./node_modules/.bin/mocha --require babel-register ./src/**/*.test.js --timeout 999000",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- ./src/ --require babel-register --timeout 999000",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "jsdoc2md": "./node_modules/.bin/jsdoc2md src/*.js > api.md",
     "commit": "./node_modules/.bin/git-cz",
@@ -20,13 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/AntonLapshin/uit.git"
   },
-  "keywords": [
-    "blocks",
-    "components",
-    "modules",
-    "observable",
-    "binding"
-  ],
+  "keywords": ["blocks", "components", "modules", "observable", "binding"],
   "author": "Anton Lapshin",
   "license": "MIT",
   "bugs": {

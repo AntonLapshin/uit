@@ -9,8 +9,8 @@ describe("Main", () => {
     });
     const el = new Element(undefined, []);
     window.location.search = "?test";
-    run(el).then(blockInstances => {
-      blockInstances[0].version.should.be.equal(1);
+    run(el).then(blockInstance => {
+      blockInstance.version.should.be.equal(1);
       done();
     });
   });

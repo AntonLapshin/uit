@@ -70,6 +70,9 @@ class XMLHttpRequest {
 global.Image = global.Image || Image;
 global.XMLHttpRequest = global.XMLHttpRequest || XMLHttpRequest;
 global.document = global.document || {
+  getElementById: id => {
+    return new Element(id, []);
+  },
   createElement: type => {
     if (type === "div") {
       return new Element("div", []);
@@ -95,5 +98,28 @@ global.document = global.document || {
 global.window = {
   location: {
     search: "?test"
+  },
+  uitDebug: {
+    debug: instance => {
+      return new Promise(resolve => {
+        resolve(instance);
+      });
+    }
+  },
+  uit: {
+    load: url => {
+      return new Promise(resolve => {
+        resolve(url);
+      });
+    }
+  },
+  JSONEditor: function(container, options) {
+    this.set = data => {
+      this.data = data;
+    };
+    this.get = () => {
+      return this.data;
+    };
+    setTimeout(options.onChange, 10);
   }
 };

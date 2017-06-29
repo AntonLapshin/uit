@@ -3,6 +3,8 @@ import { PubSub } from "./pubsub";
 import { load } from "./loader";
 import { lookup, blocks } from "./lookup";
 
+export { load } from "./loader";
+
 /**
  * Mounts a block into DOM and looks for another blocks inside
  * @param {Element} el - Container
@@ -113,7 +115,7 @@ export function append(el, name) {
 }
 
 /**
- * Runs the environment by the selected block via search string
+ * Runs the environment by a selected component via search string
  * @param {selector|string|Element} el - Container
  * @returns {Promise<Block[]>} - List of the added block instances
  */
@@ -121,8 +123,11 @@ export function run(el) {
   const search = window.location.search;
   const name = search.length > 0 ? search.substring(1) : null;
 
-  return append(el, name).then(instances => {
-    instances[0].test();
-    return instances;
+  return append(el, name).then(function(result) {
+    const instance = result[0];
+    if (window.uitDebug) {
+      return window.uitDebug.debug(instance);
+    }
+    return instance;
   });
 }
