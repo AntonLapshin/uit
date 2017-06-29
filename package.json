@@ -14,7 +14,8 @@
     "commit": "./node_modules/.bin/git-cz",
     "build-dev": "./node_modules/.bin/rollup -c rollup.dev.config.js",
     "build-prod": "./node_modules/.bin/rollup -c rollup.config.js",
-    "build": "npm run build-dev && npm run build-prod"
+    "build-debug": "./node_modules/.bin/rollup -c rollup.debug.config.js",
+    "build": "npm run build-dev && npm run build-prod && npm run build-debug"
   },
   "repository": {
     "type": "git",

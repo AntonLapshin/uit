@@ -707,57 +707,11 @@ function run(el) {
   const search = window.location.search;
   const name = search.length > 0 ? search.substring(1) : null;
 
-  return Promise.all([
-    append(el, name),
-    load(
-      "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.7.2/jsoneditor.min.js"
-    ),
-    load(
-      "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.7.2/jsoneditor.min.css"
-    )
-  ]).then(results => {
-    const instance = results[0][0];
-
-    //
-    // Debug
-    //
-    function debounce(func, wait, immediate) {
-      var timeout;
-      return function() {
-        var context = this,
-          args = arguments;
-        var later = function() {
-          timeout = null;
-          if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-      };
+  return append(el, name).then(function(result) {
+    const instance = result[0];
+    if (window.uitDebug) {
+      return window.uitDebug.debug(instance);
     }
-    const temp = document.createElement("div");
-    temp.innerHTML = `
-      <div class="debug">
-        <div id="jsoneditor"></div>
-      </div>      
-    `;
-    document.getElementsByTagName("body")[0].appendChild(temp.firstChild);
-    document.getElementsByTagName("body")[0].appendChild(temp.firstChild);
-    const container = document.getElementById("jsoneditor");
-    const editor = new JSONEditor(container, {
-      mode: "tree",
-      onChange: debounce(() => {
-        const data = editor.get();
-        instance.set(data);
-      }, 300)
-    });
-    instance.once("set", data => {
-      editor.set(data);
-    });
-
-    instance.test();
-
     return instance;
   });
 }
@@ -766,6 +720,7 @@ exports.event = event;
 exports.define = define;
 exports.append = append;
 exports.run = run;
+exports.load = load;
 exports.Observable = Observable;
 
 Object.defineProperty(exports, '__esModule', { value: true });

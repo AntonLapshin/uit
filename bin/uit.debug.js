@@ -1,3 +1,9 @@
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.uitDebug = global.uitDebug || {})));
+}(this, (function (exports) { 'use strict';
+
 const styleTemplate = `
   <style>
     body {
@@ -61,7 +67,7 @@ const append = (el, html) => {
   el.appendChild(temp.firstChild);
 };
 
-export const debug = instance => {
+const debug = instance => {
   append(document.getElementsByTagName("head")[0], styleTemplate);
   return Promise.all([
     window.uit.load(
@@ -88,3 +94,9 @@ export const debug = instance => {
     return instance;
   });
 };
+
+exports.debug = debug;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
