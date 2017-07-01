@@ -32,7 +32,7 @@ export class Component extends PubSub {
     this.el = el;
     this.elAll = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
     this.children = {};
-    logic(this);
+    logic && logic(this);
     dataBind.call(this);
   }
 

@@ -7,46 +7,33 @@ const getTarget = (ctx, p) => {
   return getTarget(ctx, p);
 };
 
-const bind = (target, method) => {
-  if (target.on) {
-    target.on(method);
-    method(target());
-  } else {
-    method(target);
+const bind = (ctx, property, method) => {
+  if (ctx.on) {
+    ctx.on(property, method);
   }
+  method(ctx[property]);
 };
 
-const unbind = (target, method) => {
-  if (target.off) {
-    target.off(method);
+const unbind = (ctx, property, method) => {
+  if (ctx.off) {
+    ctx.off(method);
   }
-};
-
-const getv = v => {
-  if (v == null) {
-    return v;
-  }
-  return v.on ? v() : v;
 };
 
 function handle(path, method) {
-  let target;
-
   const p = path.split(".");
-  if (p[0] !== "data") {
-    target = getTarget(this, [...p]);
-    bind(target, method);
-  } else {
-    p.shift();
-    this.on("set", data => {
-      if (this.olddata) {
-        target = getTarget(this.olddata, [...p]);
-        unbind(target, method);
-      }
-      target = getTarget(data, [...p]);
-      bind(target, method);
-    });
-  }
+  const property = p.pop();
+  let ctx;
+
+  p.shift();
+  this.on("set", data => {
+    if (this.olddata) {
+      ctx = getTarget(this.olddata, p);
+      unbind(ctx, property, method);
+    }
+    ctx = getTarget(data, p);
+    bind(ctx, property, method);
+  });
 }
 
 /**
@@ -54,19 +41,21 @@ function handle(path, method) {
  */
 export const rules = {
   /**
-   * [src] attribute binding
+   * [attr] binding
    */
-  src: function(el, path) {
+  attr: function(el, path, statement) {
+    const attrName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.setAttribute("src", getv(v));
+      el.setAttribute(attrName, v);
     });
   },
   /**
-   * [text] value binding
+   * [prop] binding
    */
-  text: function(el, path) {
+  prop: function(el, path, statement) {
+    const propName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.textContent = getv(v);
+      el[propName] = v;
     });
   },
   /**
@@ -75,48 +64,45 @@ export const rules = {
   class: function(el, path, statement) {
     const className = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.classList.toggle(className, getv(v));
+      el.classList.toggle(className, v);
     });
   },
   /**
-   * [attr] binding
+   * [src] attribute binding
    */
-  attr: function(el, path, statement) {
-    const attrName = statement.split(":")[2].trim();
-    handle.call(this, path, v => {
-      el.setAttribute(attrName, getv(v));
-    });
+  src: function(el, path) {
+    rules.attr.call(this, el, path, `attr: ${path}: src`);
   },
   /**
    * [href] attribute binding
    */
   href: function(el, path) {
-    handle.call(this, path, v => {
-      el.setAttribute("href", getv(v));
-    });
+    rules.attr.call(this, el, path, `attr: ${path}: href`);
+  },
+  /**
+   * [text] value binding
+   */
+  text: function(el, path) {
+    rules.prop.call(this, el, path, `prop: ${path}: textContent`);
   },
   /**
    * [val] binding
    */
   val: function(el, path) {
-    handle.call(this, path, v => {
-      el.value = getv(v);
-    });
+    rules.prop.call(this, el, path, `prop: ${path}: value`);
   },
   /**
    * [html] content binding
    */
   html: function(el, path) {
-    handle.call(this, path, v => {
-      el.innerHTML = getv(v);
-    });
+    rules.prop.call(this, el, path, `prop: ${path}: innerHTML`);
   },
   /**
    * [visible] visibility of element binding
    */
   visible: function(el, path) {
     handle.call(this, path, v => {
-      el.style.display = !getv(v) ? "none" : "";
+      el.style.display = !v ? "none" : "";
     });
   },
   /**
@@ -124,7 +110,7 @@ export const rules = {
    */
   invisible: function(el, path) {
     handle.call(this, path, v => {
-      el.style.display = !getv(v) ? "" : "none";
+      el.style.display = !v ? "" : "none";
     });
   },
   /**
@@ -132,16 +118,14 @@ export const rules = {
    */
   enable: function(el, path) {
     handle.call(this, path, v => {
-      el.classList.toggle("disabled", !getv(v));
+      el.classList.toggle("disabled", !v);
     });
   },
   /**
    * [disabled] class binding
    */
   disable: function(el, path) {
-    handle.call(this, path, v => {
-      el.classList.toggle("disabled", getv(v));
-    });
+    rules.class.call(this, el, path, `class: ${path}: disabled`);
   },
   /**
    * [click] binding
@@ -153,9 +137,9 @@ export const rules = {
     });
   },
   /**
-   * [prop] adds a link to an element
+   * [ref] adds a link to an element
    */
-  prop: function(el, value) {
+  ref: function(el, value) {
     this[value] = el;
   }
 };

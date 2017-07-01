@@ -1,6 +1,6 @@
 {
   "name": "uit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Building hierarchy of UI blocks",
   "main": "index.js",
   "directories": {
@@ -21,13 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/AntonLapshin/uit.git"
   },
-  "keywords": [
-    "blocks",
-    "components",
-    "modules",
-    "observable",
-    "binding"
-  ],
+  "keywords": ["blocks", "components", "modules", "observable", "binding"],
   "author": "Anton Lapshin",
   "license": "MIT",
   "bugs": {

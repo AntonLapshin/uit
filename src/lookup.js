@@ -8,8 +8,50 @@ const findAncestor = (el, selector) => {
   return el;
 };
 
+export const adjustPath = (parentEl, parentPath, name, call) => {
+  let path = combinePath(parentPath, name);
+
+  if (parentEl) {
+    const parentInstance = instances[parentPath];
+    if (call === opts.CALL_BY_INDEX) {
+      if (!parentInstance.children[name]) {
+        parentInstance.children[name] = [];
+      }
+      const index = parentInstance.children[name].length;
+      path += `[${index}]`;
+    } else if (typeof call === "string") {
+      if (!parentInstance.children[name]) {
+        parentInstance.children[name] = {};
+      }
+      path += `[${call}]`;
+    }
+  }
+  return path;
+};
+
+export const adjustParentChildren = (
+  parentEl,
+  name,
+  parentPath,
+  call,
+  instance
+) => {
+  if (!parentEl) {
+    return;
+  }
+  const parentInstance = instances[parentPath];
+  if (call === opts.CALL_BY_INDEX) {
+    parentInstance.children[name].push(instance);
+  } else if (call) {
+    parentInstance.children[name][call] = instance;
+  } else {
+    parentInstance.children[name] = instance;
+  }
+  instance.parent = parentInstance;
+};
+
 export const components = {};
-const _instances = {};
+export const instances = {};
 
 /**
  * Builds a component based on element. Creates a new component instance
@@ -29,23 +71,7 @@ const build = el => {
       ? parentEl.getAttribute(opts.DATA_PATH_ATTRIBUTE)
       : "root";
     const call = el.getAttribute(opts.DATA_CALL_ATTRIBUTE);
-    let path = combinePath(parentPath, name);
-
-    if (parentEl) {
-      const parentInstance = _instances[parentPath];
-      if (call === opts.CALL_BY_INDEX) {
-        if (!parentInstance.children[name]) {
-          parentInstance.children[name] = [];
-        }
-        const index = parentInstance.children[name].length;
-        path += `[${index}]`;
-      } else if (typeof call === "string") {
-        if (!parentInstance.children[name]) {
-          parentInstance.children[name] = {};
-        }
-        path += `[${call}]`;
-      }
-    }
+    const path = adjustPath(parentEl, parentPath, name, path, call);
 
     el.classList.add(`_${name}`);
     el.setAttribute(opts.DATA_READY_ATTRIBUTE, true);
@@ -53,19 +79,9 @@ const build = el => {
     el.innerHTML = component.view;
 
     const instance = new Component(name, path, el, component.logic);
-    _instances[path] = instance;
+    instances[path] = instance;
 
-    if (parentEl && parentPath) {
-      const parentInstance = _instances[parentPath];
-      if (call === opts.CALL_BY_INDEX) {
-        parentInstance.children[name].push(instance);
-      } else if (call) {
-        parentInstance.children[name][call] = instance;
-      } else {
-        parentInstance.children[name] = instance;
-      }
-      instance.parent = parentInstance;
-    }
+    adjustParentChildren(parentEl, name, parentPath, call, instance);
 
     lookup(el).then(() => {
       instance.load();

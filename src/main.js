@@ -71,11 +71,6 @@ const loadComponent = name => {
 export const event = new PubSub();
 
 /**
- * Observable class
- */
-export { Observable } from "./observable";
-
-/**
  * Defines a new component
  * @param {string} name - Name of the component
  * @param {Array} deps - List of all dependencies

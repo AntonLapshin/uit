@@ -1,10 +1,10 @@
 ## Classes
 
 <dl>
-<dt><a href="#Block">Block</a></dt>
-<dd><p>Block&#39;s instance implementation</p>
+<dt><a href="#Component">Component</a></dt>
+<dd><p>Component&#39;s instance implementation</p>
 </dd>
-<dt><a href="#Block">Block</a></dt>
+<dt><a href="#Component">Component</a></dt>
 <dd></dd>
 <dt><a href="#PubSub">PubSub</a></dt>
 <dd><p>Typical PubSub implementation</p>
@@ -18,7 +18,7 @@
 <dd><p>Loads an external resource</p>
 </dd>
 <dt><a href="#lookup">lookup</a> ⇒ <code>Promise</code></dt>
-<dd><p>Lookup for blocks inside of the container</p>
+<dd><p>Lookup for components inside of the container</p>
 </dd>
 <dt><a href="#event">event</a></dt>
 <dd><p>PubSub instance</p>
@@ -35,38 +35,38 @@
 <dd><p>Data-binding feature implementation</p>
 </dd>
 <dt><a href="#build">build(el)</a> ⇒ <code>Promise</code></dt>
-<dd><p>Builds a block based on element. Creates a new block instance</p>
+<dd><p>Builds a component based on element. Creates a new component instance</p>
 </dd>
 <dt><a href="#define">define(name, deps, Logic)</a></dt>
-<dd><p>Defines a new component (block)</p>
+<dd><p>Defines a new component</p>
 </dd>
-<dt><a href="#append">append(el, name)</a> ⇒ <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code></dt>
+<dt><a href="#append">append(el, name)</a> ⇒ <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code></dt>
 <dd><p>Loads and appends a droplet into container</p>
 </dd>
-<dt><a href="#run">run(el)</a> ⇒ <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code></dt>
-<dd><p>Runs the environment by the selected block via search string</p>
+<dt><a href="#run">run(el)</a> ⇒ <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code></dt>
+<dd><p>Runs the environment by a selected component via search string</p>
 </dd>
 </dl>
 
-<a name="Block"></a>
+<a name="Component"></a>
 
-## Block
-Block's instance implementation
+## Component
+Component's instance implementation
 
 **Kind**: global class  
 
-* [Block](#Block)
-    * [new Block(name, path, el, logic)](#new_Block_new)
-    * [.set(data)](#Block+set) ⇒ [<code>Block</code>](#Block)
-    * [.load()](#Block+load) ⇒ [<code>Block</code>](#Block)
-    * [.show()](#Block+show) ⇒ [<code>Block</code>](#Block)
-    * [.hide()](#Block+hide) ⇒ [<code>Block</code>](#Block)
-    * [.test()](#Block+test) ⇒ [<code>Block</code>](#Block)
+* [Component](#Component)
+    * [new Component(name, path, el, logic)](#new_Component_new)
+    * [.set(data)](#Component+set) ⇒ [<code>Component</code>](#Component)
+    * [.load()](#Component+load) ⇒ [<code>Component</code>](#Component)
+    * [.show()](#Component+show) ⇒ [<code>Component</code>](#Component)
+    * [.hide()](#Component+hide) ⇒ [<code>Component</code>](#Component)
+    * [.test()](#Component+test) ⇒ [<code>Component</code>](#Component)
 
-<a name="new_Block_new"></a>
+<a name="new_Component_new"></a>
 
-### new Block(name, path, el, logic)
-Creates a block's instance
+### new Component(name, path, el, logic)
+Creates a component's instance
 
 
 | Param | Type | Description |
@@ -76,63 +76,63 @@ Creates a block's instance
 | el | <code>Element</code> | DOM element |
 | logic | <code>function</code> | Custom logic of the component |
 
-<a name="Block+set"></a>
+<a name="Component+set"></a>
 
-### block.set(data) ⇒ [<code>Block</code>](#Block)
-Sets data to the block instance
+### component.set(data) ⇒ [<code>Component</code>](#Component)
+Sets data to the component instance
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
 
 | Param | Type |
 | --- | --- |
 | data | <code>object</code> | 
 
-<a name="Block+load"></a>
+<a name="Component+load"></a>
 
-### block.load() ⇒ [<code>Block</code>](#Block)
+### component.load() ⇒ [<code>Component</code>](#Component)
 Fires load event
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+show"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+show"></a>
 
-### block.show() ⇒ [<code>Block</code>](#Block)
+### component.show() ⇒ [<code>Component</code>](#Component)
 Shows element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+hide"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+hide"></a>
 
-### block.hide() ⇒ [<code>Block</code>](#Block)
+### component.hide() ⇒ [<code>Component</code>](#Component)
 Hides element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+test"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+test"></a>
 
-### block.test() ⇒ [<code>Block</code>](#Block)
+### component.test() ⇒ [<code>Component</code>](#Component)
 Tests element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component"></a>
 
-## Block
+## Component
 **Kind**: global class  
 
-* [Block](#Block)
-    * [new Block(name, path, el, logic)](#new_Block_new)
-    * [.set(data)](#Block+set) ⇒ [<code>Block</code>](#Block)
-    * [.load()](#Block+load) ⇒ [<code>Block</code>](#Block)
-    * [.show()](#Block+show) ⇒ [<code>Block</code>](#Block)
-    * [.hide()](#Block+hide) ⇒ [<code>Block</code>](#Block)
-    * [.test()](#Block+test) ⇒ [<code>Block</code>](#Block)
+* [Component](#Component)
+    * [new Component(name, path, el, logic)](#new_Component_new)
+    * [.set(data)](#Component+set) ⇒ [<code>Component</code>](#Component)
+    * [.load()](#Component+load) ⇒ [<code>Component</code>](#Component)
+    * [.show()](#Component+show) ⇒ [<code>Component</code>](#Component)
+    * [.hide()](#Component+hide) ⇒ [<code>Component</code>](#Component)
+    * [.test()](#Component+test) ⇒ [<code>Component</code>](#Component)
 
-<a name="new_Block_new"></a>
+<a name="new_Component_new"></a>
 
-### new Block(name, path, el, logic)
-Creates a block's instance
+### new Component(name, path, el, logic)
+Creates a component's instance
 
 
 | Param | Type | Description |
@@ -142,46 +142,46 @@ Creates a block's instance
 | el | <code>Element</code> | DOM element |
 | logic | <code>function</code> | Custom logic of the component |
 
-<a name="Block+set"></a>
+<a name="Component+set"></a>
 
-### block.set(data) ⇒ [<code>Block</code>](#Block)
-Sets data to the block instance
+### component.set(data) ⇒ [<code>Component</code>](#Component)
+Sets data to the component instance
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
 
 | Param | Type |
 | --- | --- |
 | data | <code>object</code> | 
 
-<a name="Block+load"></a>
+<a name="Component+load"></a>
 
-### block.load() ⇒ [<code>Block</code>](#Block)
+### component.load() ⇒ [<code>Component</code>](#Component)
 Fires load event
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+show"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+show"></a>
 
-### block.show() ⇒ [<code>Block</code>](#Block)
+### component.show() ⇒ [<code>Component</code>](#Component)
 Shows element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+hide"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+hide"></a>
 
-### block.hide() ⇒ [<code>Block</code>](#Block)
+### component.hide() ⇒ [<code>Component</code>](#Component)
 Hides element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
-<a name="Block+test"></a>
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
+<a name="Component+test"></a>
 
-### block.test() ⇒ [<code>Block</code>](#Block)
+### component.test() ⇒ [<code>Component</code>](#Component)
 Tests element
 
-**Kind**: instance method of [<code>Block</code>](#Block)  
-**Returns**: [<code>Block</code>](#Block) - instance  
+**Kind**: instance method of [<code>Component</code>](#Component)  
+**Returns**: [<code>Component</code>](#Component) - instance  
 <a name="PubSub"></a>
 
 ## PubSub
@@ -259,7 +259,7 @@ Loads an external resource
 <a name="lookup"></a>
 
 ## lookup ⇒ <code>Promise</code>
-Lookup for blocks inside of the container
+Lookup for components inside of the container
 
 **Kind**: global constant  
 
@@ -281,10 +281,12 @@ List of predefined rules
 **Kind**: global constant  
 
 * [rules](#rules)
-    * [.src()](#rules.src)
-    * [.text()](#rules.text)
+    * [.attr()](#rules.attr)
+    * [.prop()](#rules.prop)
     * [.class()](#rules.class)
+    * [.src()](#rules.src)
     * [.href()](#rules.href)
+    * [.text()](#rules.text)
     * [.val()](#rules.val)
     * [.html()](#rules.html)
     * [.visible()](#rules.visible)
@@ -292,18 +294,18 @@ List of predefined rules
     * [.enable()](#rules.enable)
     * [.disable()](#rules.disable)
     * [.click()](#rules.click)
-    * [.prop()](#rules.prop)
+    * [.ref()](#rules.ref)
 
-<a name="rules.src"></a>
+<a name="rules.attr"></a>
 
-### rules.src()
-[src] attribute binding
+### rules.attr()
+[attr] binding
 
 **Kind**: static method of [<code>rules</code>](#rules)  
-<a name="rules.text"></a>
+<a name="rules.prop"></a>
 
-### rules.text()
-[text] value binding
+### rules.prop()
+[prop] binding
 
 **Kind**: static method of [<code>rules</code>](#rules)  
 <a name="rules.class"></a>
@@ -312,10 +314,22 @@ List of predefined rules
 [class] binding
 
 **Kind**: static method of [<code>rules</code>](#rules)  
+<a name="rules.src"></a>
+
+### rules.src()
+[src] attribute binding
+
+**Kind**: static method of [<code>rules</code>](#rules)  
 <a name="rules.href"></a>
 
 ### rules.href()
 [href] attribute binding
+
+**Kind**: static method of [<code>rules</code>](#rules)  
+<a name="rules.text"></a>
+
+### rules.text()
+[text] value binding
 
 **Kind**: static method of [<code>rules</code>](#rules)  
 <a name="rules.val"></a>
@@ -360,10 +374,10 @@ List of predefined rules
 [click] binding
 
 **Kind**: static method of [<code>rules</code>](#rules)  
-<a name="rules.prop"></a>
+<a name="rules.ref"></a>
 
-### rules.prop()
-[prop] adds a link to an element
+### rules.ref()
+[ref] adds a link to an element
 
 **Kind**: static method of [<code>rules</code>](#rules)  
 <a name="dataBind"></a>
@@ -375,47 +389,47 @@ Data-binding feature implementation
 <a name="build"></a>
 
 ## build(el) ⇒ <code>Promise</code>
-Builds a block based on element. Creates a new block instance
+Builds a component based on element. Creates a new component instance
 
 **Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| el | <code>Element</code> | Block element |
+| el | <code>Element</code> | Component element |
 
 <a name="define"></a>
 
 ## define(name, deps, Logic)
-Defines a new component (block)
+Defines a new component
 
 **Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>string</code> | Name of the block |
+| name | <code>string</code> | Name of the component |
 | deps | <code>Array</code> | List of all dependencies |
 | Logic | <code>function</code> | Logic of the component |
 
 <a name="append"></a>
 
-## append(el, name) ⇒ <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code>
+## append(el, name) ⇒ <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code>
 Loads and appends a droplet into container
 
 **Kind**: global function  
-**Returns**: <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code> - - List of the added block instances  
+**Returns**: <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code> - - List of the added component instances  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | el | <code>selector</code> \| <code>string</code> \| <code>Element</code> | Container |
-| name | <code>string</code> | Name of the block |
+| name | <code>string</code> | Name of the component |
 
 <a name="run"></a>
 
-## run(el) ⇒ <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code>
-Runs the environment by the selected block via search string
+## run(el) ⇒ <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code>
+Runs the environment by a selected component via search string
 
 **Kind**: global function  
-**Returns**: <code>Promise.&lt;Array.&lt;Block&gt;&gt;</code> - - List of the added block instances  
+**Returns**: <code>Promise.&lt;Array.&lt;Component&gt;&gt;</code> - - List of the added component instances  
 
 | Param | Type | Description |
 | --- | --- | --- |

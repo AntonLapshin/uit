@@ -77,108 +77,6 @@ class PubSub {
   }
 }
 
-const combinePath = (parentPath, name) => {
-  return `${parentPath ? parentPath + "+" : ""}${name}`;
-};
-const matches = (el, selector) => {
-  return (el.matches ||
-    el.matchesSelector ||
-    el.msMatchesSelector ||
-    el.mozMatchesSelector ||
-    el.webkitMatchesSelector ||
-    el.oMatchesSelector)
-    .call(el, selector);
-};
-const findAncestor = (el, selector) => {
-  while ((el = el.parentElement) && !matches(el, selector));
-  return el;
-};
-
-const blocks = {};
-const _instances = {};
-
-/**
- * Builds a block based on element. Creates a new block instance
- * @param {Element} el Block element
- * @returns {Promise}
- */
-const build = el => {
-  return new Promise(resolve => {
-    const name = el.getAttribute(opts.DATA_BLOCK_NAME_ATTRIBUTE);
-    const block = blocks[name];
-    if (!block.view) {
-      throw `View of ${name} block is undefined`;
-    }
-
-    const parentEl = findAncestor(el, `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]`);
-    const parentPath = parentEl
-      ? parentEl.getAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE)
-      : "root";
-    const call = el.getAttribute(opts.DATA_BLOCK_CALL_ATTRIBUTE);
-    let path = combinePath(parentPath, name);
-
-    if (parentEl) {
-      const parentBlock = _instances[parentPath];
-      if (call === opts.CALL_BY_INDEX) {
-        if (!parentBlock.children[name]) {
-          parentBlock.children[name] = [];
-        }
-        const index = parentBlock.children[name].length;
-        path += `[${index}]`;
-      } else if (typeof call === "string") {
-        if (!parentBlock.children[name]) {
-          parentBlock.children[name] = {};
-        }
-        path += `[${call}]`;
-      }
-    }
-
-    el.classList.add(`_${name}`);
-    el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
-    el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
-    el.innerHTML = block.view;
-
-    const blockInstance = new Block(name, path, el, block.logic);
-    _instances[path] = blockInstance;
-
-    if (parentEl && parentPath) {
-      const parentBlock = _instances[parentPath];
-      if (call === opts.CALL_BY_INDEX) {
-        parentBlock.children[name].push(blockInstance);
-      } else if (call) {
-        parentBlock.children[name][call] = blockInstance;
-      } else {
-        parentBlock.children[name] = blockInstance;
-      }
-      blockInstance.parent = parentBlock;
-    }
-
-    lookup(el).then(() => {
-      blockInstance.load();
-      resolve(blockInstance);
-    });
-  });
-};
-
-/**
- * Lookup for blocks inside of the container
- * @param {Element} el Container
- * @returns {Promise}
- */
-const lookup = el => {
-  const els =
-    el.querySelectorAll(
-      `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
-    ) || [];
-
-  const promises = Array.prototype.map.call(els, el => {
-    return build(el);
-  });
-  return Promise.all(promises).then(result => {
-    return result[0];
-  });
-};
-
 const getTarget = (ctx, p) => {
   if (p.length === 0) {
     return ctx;
@@ -188,46 +86,33 @@ const getTarget = (ctx, p) => {
   return getTarget(ctx, p);
 };
 
-const bind = (target, method) => {
-  if (target.on) {
-    target.on(method);
-    method(target());
-  } else {
-    method(target);
+const bind = (ctx, property, method) => {
+  if (ctx.on) {
+    ctx.on(property, method);
   }
+  method(ctx[property]);
 };
 
-const unbind = (target, method) => {
-  if (target.off) {
-    target.off(method);
+const unbind = (ctx, property, method) => {
+  if (ctx.off) {
+    ctx.off(method);
   }
-};
-
-const getv = v => {
-  if (v == null) {
-    return v;
-  }
-  return v.on ? v() : v;
 };
 
 function handle(path, method) {
-  let target;
-
   const p = path.split(".");
-  if (p[0] !== "data") {
-    target = getTarget(this, [...p]);
-    bind(target, method);
-  } else {
-    p.shift();
-    this.on("set", data => {
-      if (this.olddata) {
-        target = getTarget(this.olddata, [...p]);
-        unbind(target, method);
-      }
-      target = getTarget(data, [...p]);
-      bind(target, method);
-    });
-  }
+  const property = p.pop();
+  let ctx;
+
+  p.shift();
+  this.on("set", data => {
+    if (this.olddata) {
+      ctx = getTarget(this.olddata, p);
+      unbind(ctx, property, method);
+    }
+    ctx = getTarget(data, p);
+    bind(ctx, property, method);
+  });
 }
 
 /**
@@ -235,19 +120,21 @@ function handle(path, method) {
  */
 const rules = {
   /**
-   * [src] attribute binding
+   * [attr] binding
    */
-  src: function(el, path) {
+  attr: function(el, path, statement) {
+    const attrName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.setAttribute("src", getv(v));
+      el.setAttribute(attrName, v);
     });
   },
   /**
-   * [text] value binding
+   * [prop] binding
    */
-  text: function(el, path) {
+  prop: function(el, path, statement) {
+    const propName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.textContent = getv(v);
+      el[propName] = v;
     });
   },
   /**
@@ -256,48 +143,45 @@ const rules = {
   class: function(el, path, statement) {
     const className = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.classList.toggle(className, getv(v));
+      el.classList.toggle(className, v);
     });
   },
   /**
-   * [attr] binding
+   * [src] attribute binding
    */
-  attr: function(el, path, statement) {
-    const attrName = statement.split(":")[2].trim();
-    handle.call(this, path, v => {
-      el.setAttribute(attrName, getv(v));
-    });
+  src: function(el, path) {
+    rules.attr.call(this, el, path, `attr: ${path}: src`);
   },
   /**
    * [href] attribute binding
    */
   href: function(el, path) {
-    handle.call(this, path, v => {
-      el.setAttribute("href", getv(v));
-    });
+    rules.attr.call(this, el, path, `attr: ${path}: href`);
+  },
+  /**
+   * [text] value binding
+   */
+  text: function(el, path) {
+    rules.prop.call(this, el, path, `prop: ${path}: textContent`);
   },
   /**
    * [val] binding
    */
   val: function(el, path) {
-    handle.call(this, path, v => {
-      el.value = getv(v);
-    });
+    rules.prop.call(this, el, path, `prop: ${path}: value`);
   },
   /**
    * [html] content binding
    */
   html: function(el, path) {
-    handle.call(this, path, v => {
-      el.innerHTML = getv(v);
-    });
+    rules.prop.call(this, el, path, `prop: ${path}: innerHTML`);
   },
   /**
    * [visible] visibility of element binding
    */
   visible: function(el, path) {
     handle.call(this, path, v => {
-      el.style.display = !getv(v) ? "none" : "";
+      el.style.display = !v ? "none" : "";
     });
   },
   /**
@@ -305,7 +189,7 @@ const rules = {
    */
   invisible: function(el, path) {
     handle.call(this, path, v => {
-      el.style.display = !getv(v) ? "" : "none";
+      el.style.display = !v ? "" : "none";
     });
   },
   /**
@@ -313,16 +197,14 @@ const rules = {
    */
   enable: function(el, path) {
     handle.call(this, path, v => {
-      el.classList.toggle("disabled", !getv(v));
+      el.classList.toggle("disabled", !v);
     });
   },
   /**
    * [disabled] class binding
    */
   disable: function(el, path) {
-    handle.call(this, path, v => {
-      el.classList.toggle("disabled", getv(v));
-    });
+    rules.class.call(this, el, path, `class: ${path}: disabled`);
   },
   /**
    * [click] binding
@@ -334,9 +216,9 @@ const rules = {
     });
   },
   /**
-   * [prop] adds a link to an element
+   * [ref] adds a link to an element
    */
-  prop: function(el, value) {
+  ref: function(el, value) {
     this[value] = el;
   }
 };
@@ -349,7 +231,7 @@ function dataBind() {
     return;
   }
   const els = Array.prototype.filter.call(this.elAll, el => {
-    return matches(el, `[${opts.DATA_BIND_ATTRIBUTE}]`);
+    return el.matches(`[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
   els.forEach(el => {
     const bindAttr = el.getAttribute(opts.DATA_BIND_ATTRIBUTE);
@@ -370,21 +252,21 @@ function dataBind() {
  * TODOs: Add comments
  */
 const opts = {
-  DATA_BLOCK_NAME_ATTRIBUTE: "data-block-name",
-  DATA_BLOCK_READY_ATTRIBUTE: "data-block-ready",
-  DATA_BLOCK_PATH_ATTRIBUTE: "data-block-path",
-  DATA_BLOCK_CALL_ATTRIBUTE: "data-block-call",
+  DATA_NAME_ATTRIBUTE: "data-uit-name",
+  DATA_READY_ATTRIBUTE: "data-uit-ready",
+  DATA_PATH_ATTRIBUTE: "data-uit-path",
+  DATA_CALL_ATTRIBUTE: "data-uit-call",
   DATA_BIND_ATTRIBUTE: "data-bind",
   CALL_BY_INDEX: "byIndex",
-  BASE_URL: "./blocks/"
+  BASE_URL: "./components/"
 };
 
 /**
- * Block's instance implementation
+ * Component's instance implementation
  */
-class Block extends PubSub {
+class Component extends PubSub {
   /**
-   * Creates a block's instance
+   * Creates a component's instance
    * @param {string} name Name of the component
    * @param {string} path The full path of the component
    * @param {Element} el DOM element
@@ -395,18 +277,16 @@ class Block extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelectorAll(
-      `*:not([${opts.DATA_BLOCK_NAME_ATTRIBUTE}])`
-    );
+    this.elAll = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
     this.children = {};
-    logic(this);
+    logic && logic(this);
     dataBind.call(this);
   }
 
   /**
-   * Sets data to the block instance
+   * Sets data to the component instance
    * @param {object} data 
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   set(data) {
     this.olddata = this.data;
@@ -417,7 +297,7 @@ class Block extends PubSub {
 
   /**
    * Fires load event
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   load() {
     this.fire("load");
@@ -426,7 +306,7 @@ class Block extends PubSub {
 
   /**
    * Shows element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   show() {
     this.el.style.display = "";
@@ -436,7 +316,7 @@ class Block extends PubSub {
 
   /**
    * Hides element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   hide() {
     this.el.style.display = "none";
@@ -446,7 +326,7 @@ class Block extends PubSub {
 
   /**
    * Tests element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   test() {
     this.el.style.display = "";
@@ -543,74 +423,127 @@ const load = url => {
   });
 };
 
-/**
- * Typical implementation of the Observable variables
- */
-class ObservableValue extends PubSub {
-  constructor(data) {
-    super();
-    this.data = data;
-  }
+const combinePath = (parentPath, name) => {
+  return `${parentPath}+${name}`;
+};
+const findAncestor = (el, selector) => {
+  while ((el = el.parentElement) && !el.matches(selector));
+  return el;
+};
 
-  update(data) {
-    this.olddata = this.data;
-    this.data = data;
-    return this.fire();
-  }
+const adjustPath = (parentEl, parentPath, name, call) => {
+  let path = combinePath(parentPath, name);
 
-  fire() {
-    return super.fire("update", this.data, this.olddata);
-  }
-
-  on(h) {
-    return super.on("update", h);
-  }
-}
-
-const Observable = data => {
-  const value = new ObservableValue(data);
-
-  const ObservableBehavior = data => {
-    if (data === undefined) {
-      return value.data;
+  if (parentEl) {
+    const parentInstance = instances[parentPath];
+    if (call === opts.CALL_BY_INDEX) {
+      if (!parentInstance.children[name]) {
+        parentInstance.children[name] = [];
+      }
+      const index = parentInstance.children[name].length;
+      path += `[${index}]`;
+    } else if (typeof call === "string") {
+      if (!parentInstance.children[name]) {
+        parentInstance.children[name] = {};
+      }
+      path += `[${call}]`;
     }
-    value.update(data);
-    return ObservableBehavior;
-  };
+  }
+  return path;
+};
 
-  /**
-   * Subscribes on variable's changes
-   * @param {function} handler - Event Handler
-   * @returns {number} - token
-   */
-  ObservableBehavior.on = h => {
-    return value.on(h);
-  };
-  /**
-   * Unsubscribes from variable's changes
-   * @param {number} token - Token for unsubscribe
-   * @returns {boolean} - Result
-   */
-  ObservableBehavior.off = token => {
-    return value.off(token);
-  };
+const adjustParentChildren = (
+  parentEl,
+  name,
+  parentPath,
+  call,
+  instance
+) => {
+  if (!parentEl) {
+    return;
+  }
+  const parentInstance = instances[parentPath];
+  if (call === opts.CALL_BY_INDEX) {
+    parentInstance.children[name].push(instance);
+  } else if (call) {
+    parentInstance.children[name][call] = instance;
+  } else {
+    parentInstance.children[name] = instance;
+  }
+  instance.parent = parentInstance;
+};
 
-  return ObservableBehavior;
+const components = {};
+const instances = {};
+
+/**
+ * Builds a component based on element. Creates a new component instance
+ * @param {Element} el Component element
+ * @returns {Promise}
+ */
+const build = el => {
+  return new Promise(resolve => {
+    const name = el.getAttribute(opts.DATA_NAME_ATTRIBUTE);
+    const component = components[name];
+    if (!component.view) {
+      throw `View of ${name} component is undefined`;
+    }
+
+    const parentEl = findAncestor(el, `[${opts.DATA_NAME_ATTRIBUTE}]`);
+    const parentPath = parentEl
+      ? parentEl.getAttribute(opts.DATA_PATH_ATTRIBUTE)
+      : "root";
+    const call = el.getAttribute(opts.DATA_CALL_ATTRIBUTE);
+    const path = adjustPath(parentEl, parentPath, name, path, call);
+
+    el.classList.add(`_${name}`);
+    el.setAttribute(opts.DATA_READY_ATTRIBUTE, true);
+    el.setAttribute(opts.DATA_PATH_ATTRIBUTE, path);
+    el.innerHTML = component.view;
+
+    const instance = new Component(name, path, el, component.logic);
+    instances[path] = instance;
+
+    adjustParentChildren(parentEl, name, parentPath, call, instance);
+
+    lookup(el).then(() => {
+      instance.load();
+      resolve(instance);
+    });
+  });
 };
 
 /**
- * Mounts a block into DOM and looks for another blocks inside
+ * Lookup for components inside of the container
+ * @param {Element} el Container
+ * @returns {Promise}
+ */
+const lookup = el => {
+  const els = el.querySelectorAll(
+    `[${opts.DATA_NAME_ATTRIBUTE}]:not([${opts.DATA_READY_ATTRIBUTE}]`
+  );
+
+  const promises = Array.prototype.map.call(els, el => {
+    return build(el);
+  });
+  return Promise.all(promises).then(result => {
+    return result[0];
+  });
+};
+
+/**
+ * Mounts a component into DOM and looks for another components inside
  * @param {Element} el - Container
  * @param {string} name - Name of the component
  * @param {string} html - Input html string
- * @returns {Promise<Block[]>} - List of mounted blocks
+ * @returns {Promise<Component[]>} - List of mounted components
  * @ignore
  */
 const mount = (el, name, html) => {
   if (el instanceof Element !== true) {
     throw "el is not an Element instance";
   }
-  return loadBlock(name).then(() => {
+  return loadComponent(name).then(() => {
     const temp = document.createElement("div");
     temp.innerHTML = html;
     const item = temp.firstChild;
@@ -630,7 +563,7 @@ const loadDeps = (name, deps) => {
   const baseUrl = opts.BASE_URL + name + "/";
   const promises = deps.map(dep => {
     if (dep.indexOf(".") === -1) {
-      return loadBlock(dep);
+      return loadComponent(dep);
     }
     const url = baseUrl + dep;
     return load(url);
@@ -642,17 +575,17 @@ const loadDeps = (name, deps) => {
 /**
  * Loads logic + view + style. The define method is called after loading
  * @param {string} name - Name of the component
- * @returns {Promise<object>} - Block definition
+ * @returns {Promise<object>} - Component definition
  * @ignore
  */
-const loadBlock = name => {
-  if (blocks[name]) {
-    return blocks[name].promise;
+const loadComponent = name => {
+  if (components[name]) {
+    return components[name].promise;
   }
 
   return new Promise(resolve => {
-    event.on(`${name}.load`, block => {
-      resolve(block);
+    event.on(`${name}.load`, component => {
+      resolve(component);
     });
     loadDeps(name, ["logic.js"]);
   });
@@ -664,26 +597,26 @@ const loadBlock = name => {
 const event = new PubSub();
 
 /**
- * Defines a new component (block)
- * @param {string} name - Name of the block
+ * Defines a new component
+ * @param {string} name - Name of the component
  * @param {Array} deps - List of all dependencies
  * @param {function} Logic - Logic of the component
  */
 function define(name, deps, Logic) {
-  const block = {
+  const component = {
     name: name,
     deps: null
   };
-  blocks[name] = block;
-  block.promise = new Promise(resolve => {
+  components[name] = component;
+  component.promise = new Promise(resolve => {
     loadDeps(name, ["view.html", "style.css", ...deps]).then(args => {
-      block.view = args[0];
-      block.deps = args;
-      block.logic = context => {
-        Logic.call(context, context, block.deps);
+      component.view = args[0];
+      component.deps = args;
+      component.logic = context => {
+        Logic.call(context, context, component.deps);
       };
-      event.fire(`${name}.load`, block);
-      resolve(block);
+      event.fire(`${name}.load`, component);
+      resolve(component);
     });
   });
 }
@@ -691,21 +624,17 @@ function define(name, deps, Logic) {
 /**
  * Loads and appends a droplet into container
  * @param {selector|string|Element} el - Container
- * @param {string} name - Name of the block
- * @returns {Promise<Block[]>} - List of the added block instances
+ * @param {string} name - Name of the component
+ * @returns {Promise<Component[]>} - List of the added component instances
  */
 function append(el, name) {
-  return mount(
-    el,
-    name,
-    `<div ${opts.DATA_BLOCK_NAME_ATTRIBUTE}="${name}"></div>`
-  );
+  return mount(el, name, `<div ${opts.DATA_NAME_ATTRIBUTE}="${name}"></div>`);
 }
 
 /**
  * Runs the environment by a selected component via search string
  * @param {selector|string|Element} el - Container
- * @returns {Promise<Block[]>} - List of the added block instances
+ * @returns {Promise<Component[]>} - List of the added component instances
  */
 function run(el) {
   const search = window.location.search;
@@ -724,7 +653,6 @@ exports.define = define;
 exports.append = append;
 exports.run = run;
 exports.load = load;
-exports.Observable = Observable;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
