@@ -1,4 +1,4 @@
-import { opts } from "./block";
+import { opts } from "./component";
 import { rules } from "./rules";
 
 /**

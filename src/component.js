@@ -5,21 +5,21 @@ import { PubSub } from "./pubsub";
 import { dataBind } from "./data-bind";
 
 export const opts = {
-  DATA_BLOCK_NAME_ATTRIBUTE: "data-block-name",
-  DATA_BLOCK_READY_ATTRIBUTE: "data-block-ready",
-  DATA_BLOCK_PATH_ATTRIBUTE: "data-block-path",
-  DATA_BLOCK_CALL_ATTRIBUTE: "data-block-call",
+  DATA_NAME_ATTRIBUTE: "data-uit-name",
+  DATA_READY_ATTRIBUTE: "data-uit-ready",
+  DATA_PATH_ATTRIBUTE: "data-uit-path",
+  DATA_CALL_ATTRIBUTE: "data-uit-call",
   DATA_BIND_ATTRIBUTE: "data-bind",
   CALL_BY_INDEX: "byIndex",
-  BASE_URL: "./blocks/"
+  BASE_URL: "./components/"
 };
 
 /**
- * Block's instance implementation
+ * Component's instance implementation
  */
-export class Block extends PubSub {
+export class Component extends PubSub {
   /**
-   * Creates a block's instance
+   * Creates a component's instance
    * @param {string} name Name of the component
    * @param {string} path The full path of the component
    * @param {Element} el DOM element
@@ -30,18 +30,16 @@ export class Block extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelectorAll(
-      `*:not([${opts.DATA_BLOCK_NAME_ATTRIBUTE}])`
-    );
+    this.elAll = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
     this.children = {};
     logic(this);
     dataBind.call(this);
   }
 
   /**
-   * Sets data to the block instance
+   * Sets data to the component instance
    * @param {object} data 
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   set(data) {
     this.olddata = this.data;
@@ -52,7 +50,7 @@ export class Block extends PubSub {
 
   /**
    * Fires load event
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   load() {
     this.fire("load");
@@ -61,7 +59,7 @@ export class Block extends PubSub {
 
   /**
    * Shows element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   show() {
     this.el.style.display = "";
@@ -71,7 +69,7 @@ export class Block extends PubSub {
 
   /**
    * Hides element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   hide() {
     this.el.style.display = "none";
@@ -81,7 +79,7 @@ export class Block extends PubSub {
 
   /**
    * Tests element
-   * @returns {Block} instance
+   * @returns {Component} instance
    */
   test() {
     this.el.style.display = "";

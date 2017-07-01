@@ -1,4 +1,4 @@
-import { Block, opts } from "./block";
+import { Component, opts } from "./component";
 
 const combinePath = (parentPath, name) => {
   return `${parentPath}+${name}`;
@@ -8,80 +8,80 @@ const findAncestor = (el, selector) => {
   return el;
 };
 
-export const blocks = {};
+export const components = {};
 const _instances = {};
 
 /**
- * Builds a block based on element. Creates a new block instance
- * @param {Element} el Block element
+ * Builds a component based on element. Creates a new component instance
+ * @param {Element} el Component element
  * @returns {Promise}
  */
 const build = el => {
   return new Promise(resolve => {
-    const name = el.getAttribute(opts.DATA_BLOCK_NAME_ATTRIBUTE);
-    const block = blocks[name];
-    if (!block.view) {
-      throw `View of ${name} block is undefined`;
+    const name = el.getAttribute(opts.DATA_NAME_ATTRIBUTE);
+    const component = components[name];
+    if (!component.view) {
+      throw `View of ${name} component is undefined`;
     }
 
-    const parentEl = findAncestor(el, `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]`);
+    const parentEl = findAncestor(el, `[${opts.DATA_NAME_ATTRIBUTE}]`);
     const parentPath = parentEl
-      ? parentEl.getAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE)
+      ? parentEl.getAttribute(opts.DATA_PATH_ATTRIBUTE)
       : "root";
-    const call = el.getAttribute(opts.DATA_BLOCK_CALL_ATTRIBUTE);
+    const call = el.getAttribute(opts.DATA_CALL_ATTRIBUTE);
     let path = combinePath(parentPath, name);
 
     if (parentEl) {
-      const parentBlock = _instances[parentPath];
+      const parentInstance = _instances[parentPath];
       if (call === opts.CALL_BY_INDEX) {
-        if (!parentBlock.children[name]) {
-          parentBlock.children[name] = [];
+        if (!parentInstance.children[name]) {
+          parentInstance.children[name] = [];
         }
-        const index = parentBlock.children[name].length;
+        const index = parentInstance.children[name].length;
         path += `[${index}]`;
       } else if (typeof call === "string") {
-        if (!parentBlock.children[name]) {
-          parentBlock.children[name] = {};
+        if (!parentInstance.children[name]) {
+          parentInstance.children[name] = {};
         }
         path += `[${call}]`;
       }
     }
 
     el.classList.add(`_${name}`);
-    el.setAttribute(opts.DATA_BLOCK_READY_ATTRIBUTE, true);
-    el.setAttribute(opts.DATA_BLOCK_PATH_ATTRIBUTE, path);
-    el.innerHTML = block.view;
+    el.setAttribute(opts.DATA_READY_ATTRIBUTE, true);
+    el.setAttribute(opts.DATA_PATH_ATTRIBUTE, path);
+    el.innerHTML = component.view;
 
-    const blockInstance = new Block(name, path, el, block.logic);
-    _instances[path] = blockInstance;
+    const instance = new Component(name, path, el, component.logic);
+    _instances[path] = instance;
 
     if (parentEl && parentPath) {
-      const parentBlock = _instances[parentPath];
+      const parentInstance = _instances[parentPath];
       if (call === opts.CALL_BY_INDEX) {
-        parentBlock.children[name].push(blockInstance);
+        parentInstance.children[name].push(instance);
       } else if (call) {
-        parentBlock.children[name][call] = blockInstance;
+        parentInstance.children[name][call] = instance;
       } else {
-        parentBlock.children[name] = blockInstance;
+        parentInstance.children[name] = instance;
       }
-      blockInstance.parent = parentBlock;
+      instance.parent = parentInstance;
     }
 
     lookup(el).then(() => {
-      blockInstance.load();
-      resolve(blockInstance);
+      instance.load();
+      resolve(instance);
     });
   });
 };
 
 /**
- * Lookup for blocks inside of the container
+ * Lookup for components inside of the container
  * @param {Element} el Container
  * @returns {Promise}
  */
 export const lookup = el => {
   const els = el.querySelectorAll(
-    `[${opts.DATA_BLOCK_NAME_ATTRIBUTE}]:not([${opts.DATA_BLOCK_READY_ATTRIBUTE}]`
+    `[${opts.DATA_NAME_ATTRIBUTE}]:not([${opts.DATA_READY_ATTRIBUTE}]`
   );
 
   const promises = Array.prototype.map.call(els, el => {

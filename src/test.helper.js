@@ -6,7 +6,7 @@ global.Element =
   global.Element ||
   function(name, children) {
     this.children = children;
-    this.data_block_name = name;
+    this.data_uit_name = name;
     this.querySelectorAll = () => {
       if (this.innerHTML && this.innerHTML.indexOf("test") > -1) {
         return [new Element("test")];

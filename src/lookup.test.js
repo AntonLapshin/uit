@@ -1,10 +1,10 @@
 import should from "should";
-import { lookup, blocks } from "./lookup";
+import { lookup, components } from "./lookup";
 import helper from "./test.helper";
 
 describe("Lookup", () => {
   it("build", done => {
-    blocks["test"] = {
+    components["test"] = {
       view: "<div></div>",
       logic: ctx => {
         ctx.version = 1;
@@ -20,14 +20,14 @@ describe("Lookup", () => {
   });
 
   it("nested components", done => {
-    blocks["child"] = {
+    components["child"] = {
       view: "<div></div>",
       logic: ctx => {
         ctx.type = "child";
       }
     };
-    blocks["parent"] = {
-      view: "<div><span data-block-name='child'></span></div>",
+    components["parent"] = {
+      view: "<div><span data-uit-name='child'></span></div>",
       logic: ctx => {
         ctx.type = "parent";
       }

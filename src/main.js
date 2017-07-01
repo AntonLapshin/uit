@@ -1,23 +1,23 @@
-import { opts } from "./block";
+import { opts } from "./component";
 import { PubSub } from "./pubsub";
 import { load } from "./loader";
-import { lookup, blocks } from "./lookup";
+import { lookup, components } from "./lookup";
 
 export { load } from "./loader";
 
 /**
- * Mounts a block into DOM and looks for another blocks inside
+ * Mounts a component into DOM and looks for another components inside
  * @param {Element} el - Container
  * @param {string} name - Name of the component
  * @param {string} html - Input html string
- * @returns {Promise<Block[]>} - List of mounted blocks
+ * @returns {Promise<Component[]>} - List of mounted components
  * @ignore
  */
 const mount = (el, name, html) => {
   if (el instanceof Element !== true) {
     throw "el is not an Element instance";
   }
-  return loadBlock(name).then(() => {
+  return loadComponent(name).then(() => {
     const temp = document.createElement("div");
     temp.innerHTML = html;
     const item = temp.firstChild;
@@ -37,7 +37,7 @@ const loadDeps = (name, deps) => {
   const baseUrl = opts.BASE_URL + name + "/";
   const promises = deps.map(dep => {
     if (dep.indexOf(".") === -1) {
-      return loadBlock(dep);
+      return loadComponent(dep);
     }
     const url = baseUrl + dep;
     return load(url);
@@ -49,17 +49,17 @@ const loadDeps = (name, deps) => {
 /**
  * Loads logic + view + style. The define method is called after loading
  * @param {string} name - Name of the component
- * @returns {Promise<object>} - Block definition
+ * @returns {Promise<object>} - Component definition
  * @ignore
  */
-const loadBlock = name => {
-  if (blocks[name]) {
-    return blocks[name].promise;
+const loadComponent = name => {
+  if (components[name]) {
+    return components[name].promise;
   }
 
   return new Promise(resolve => {
-    event.on(`${name}.load`, block => {
-      resolve(block);
+    event.on(`${name}.load`, component => {
+      resolve(component);
     });
     loadDeps(name, ["logic.js"]);
   });
@@ -76,26 +76,26 @@ export const event = new PubSub();
 export { Observable } from "./observable";
 
 /**
- * Defines a new component (block)
- * @param {string} name - Name of the block
+ * Defines a new component
+ * @param {string} name - Name of the component
  * @param {Array} deps - List of all dependencies
  * @param {function} Logic - Logic of the component
  */
 export function define(name, deps, Logic) {
-  const block = {
+  const component = {
     name: name,
     deps: null
   };
-  blocks[name] = block;
-  block.promise = new Promise(resolve => {
+  components[name] = component;
+  component.promise = new Promise(resolve => {
     loadDeps(name, ["view.html", "style.css", ...deps]).then(args => {
-      block.view = args[0];
-      block.deps = args;
-      block.logic = context => {
-        Logic.call(context, context, block.deps);
+      component.view = args[0];
+      component.deps = args;
+      component.logic = context => {
+        Logic.call(context, context, component.deps);
       };
-      event.fire(`${name}.load`, block);
-      resolve(block);
+      event.fire(`${name}.load`, component);
+      resolve(component);
     });
   });
 }
@@ -103,21 +103,17 @@ export function define(name, deps, Logic) {
 /**
  * Loads and appends a droplet into container
  * @param {selector|string|Element} el - Container
- * @param {string} name - Name of the block
- * @returns {Promise<Block[]>} - List of the added block instances
+ * @param {string} name - Name of the component
+ * @returns {Promise<Component[]>} - List of the added component instances
  */
 export function append(el, name) {
-  return mount(
-    el,
-    name,
-    `<div ${opts.DATA_BLOCK_NAME_ATTRIBUTE}="${name}"></div>`
-  );
+  return mount(el, name, `<div ${opts.DATA_NAME_ATTRIBUTE}="${name}"></div>`);
 }
 
 /**
  * Runs the environment by a selected component via search string
  * @param {selector|string|Element} el - Container
- * @returns {Promise<Block[]>} - List of the added block instances
+ * @returns {Promise<Component[]>} - List of the added component instances
  */
 export function run(el) {
   const search = window.location.search;

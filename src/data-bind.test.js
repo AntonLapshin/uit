@@ -1,6 +1,6 @@
 import should from "should";
 import { dataBind } from "./data-bind";
-import { Block, opts } from "./block";
+import { Component, opts } from "./component";
 import { Observable } from "./observable";
 import { helper } from "./test.helper";
 
@@ -9,12 +9,12 @@ describe("Data-binding", () => {
     const kid = new Element("kid", []);
     kid.setAttribute(opts.DATA_BIND_ATTRIBUTE, "src: src");
     const el = new Element("test", [kid]);
-    const block = new Block("test", null, el, ctx => {
+    const instance = new Component("test", null, el, ctx => {
       ctx.src = new Observable();
     });
-    dataBind.call(block);
+    dataBind.call(instance);
     should.not.exist(kid.getAttribute("src"));
-    block.src("resource/test.png");
+    instance.src("resource/test.png");
     kid.getAttribute("src").should.be.equal("resource/test.png");
   });
 });
