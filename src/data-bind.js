@@ -21,6 +21,8 @@ export function dataBind() {
       const value = parts[1].trim();
       if (rules[key]) {
         rules[key].call(this, el, value, statement);
+      } else {
+        throw new Error(`binding rule <${key}> doesn't exist`);
       }
     });
   });

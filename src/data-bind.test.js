@@ -17,4 +17,14 @@ describe("Data-binding", () => {
     instance.data.inner.src = "2";
     kid.getAttribute("src").should.be.equal("2");
   });
+
+  it("rule doesn't exist", () => {
+    const kid = new Element("kid", []);
+    const rule = "xxx";
+    kid.setAttribute(opts.DATA_BIND_ATTRIBUTE, `${rule}: data.inner.src`);
+    const el = new Element("test", [kid]);
+    should.throws(() => {
+      const instance = new Component("test", null, el);
+    });
+  });
 });

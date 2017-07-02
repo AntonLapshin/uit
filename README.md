@@ -3,7 +3,7 @@
 Ultra small JavaScript library for building hierarchy of UI components
 
 [![Build Status](https://travis-ci.org/AntonLapshin/uit.svg?branch=master)](https://travis-ci.org/AntonLapshin/uit)
-[![Coveralls Status](https://coveralls.io/repos/github/AntonLapshin/uit/badge.svg?branch=master&v=3)](https://coveralls.io/github/AntonLapshin/uit?branch=master)
+[![Coveralls Status](https://coveralls.io/repos/github/AntonLapshin/uit/badge.svg?branch=master&v=4)](https://coveralls.io/github/AntonLapshin/uit?branch=master)
 [![Lib Size](http://img.badgesize.io/AntonLapshin/uit/master/bin/uit.min.js.svg?compression=gzip)](https://github.com/AntonLapshin/uit/blob/master/dist/uit.min.js)
 [![Gemnasium](https://img.shields.io/gemnasium/mathiasbynens/he.svg)]()
 [![DUB](https://img.shields.io/dub/l/vibe-d.svg)]()
