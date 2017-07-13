@@ -71,7 +71,7 @@ const build = el => {
       ? parentEl.getAttribute(opts.DATA_PATH_ATTRIBUTE)
       : "root";
     const call = el.getAttribute(opts.DATA_CALL_ATTRIBUTE);
-    const path = adjustPath(parentEl, parentPath, name, path, call);
+    const path = adjustPath(parentEl, parentPath, name, call);
 
     el.classList.add(`_${name}`);
     el.setAttribute(opts.DATA_READY_ATTRIBUTE, true);

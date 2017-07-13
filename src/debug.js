@@ -75,7 +75,7 @@ export const debug = instance => {
       onChange: debounce(() => {
         const data = editor.get();
         instance.set(data);
-      }, 300)
+      }, 300)      
     });
     instance.once("set", data => {
       editor.set(data);

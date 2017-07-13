@@ -46,7 +46,11 @@ export const rules = {
   attr: function(el, path, statement) {
     const attrName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.setAttribute(attrName, v);
+      if (v === false){
+        el.removeAttribute(attrName);
+      } else {
+        el.setAttribute(attrName, v);
+      }
     });
   },
   /**

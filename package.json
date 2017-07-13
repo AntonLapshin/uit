@@ -21,7 +21,13 @@
     "type": "git",
     "url": "git+https://github.com/AntonLapshin/uit.git"
   },
-  "keywords": ["blocks", "components", "modules", "observable", "binding"],
+  "keywords": [
+    "blocks",
+    "components",
+    "modules",
+    "observable",
+    "binding"
+  ],
   "author": "Anton Lapshin",
   "license": "MIT",
   "bugs": {
@@ -45,7 +51,7 @@
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^3.0.0",
     "mocha": "^3.4.2",
-    "proxy-observable": "^2.0.1",
+    "proxy-observable": "^2.1.0",
     "rollup": "^0.43.0",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-node-resolve": "^3.0.0",

@@ -125,7 +125,11 @@ const rules = {
   attr: function(el, path, statement) {
     const attrName = statement.split(":")[2].trim();
     handle.call(this, path, v => {
-      el.setAttribute(attrName, v);
+      if (v === false){
+        el.removeAttribute(attrName);
+      } else {
+        el.setAttribute(attrName, v);
+      }
     });
   },
   /**
@@ -496,7 +500,7 @@ const build = el => {
       ? parentEl.getAttribute(opts.DATA_PATH_ATTRIBUTE)
       : "root";
     const call = el.getAttribute(opts.DATA_CALL_ATTRIBUTE);
-    const path = adjustPath(parentEl, parentPath, name, path, call);
+    const path = adjustPath(parentEl, parentPath, name, call);
 
     el.classList.add(`_${name}`);
     el.setAttribute(opts.DATA_READY_ATTRIBUTE, true);
