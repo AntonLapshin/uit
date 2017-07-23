@@ -78,22 +78,19 @@ export const event = new PubSub();
  */
 export function define(...args) {
   const name = args[0];
-  const view = typeof args[1] === "string"
-    ? args[1]
-    : null;
-  const style = typeof args[2] === "string"
-    ? args[2]
-    : null;
-  if (style){
+  const view = typeof args[1] === "string" ? args[1] : null;
+  const style = typeof args[2] === "string" ? args[2] : null;
+  if (style) {
     const styleTag = document.createElement("style");
     styleTag.innerHTML = style;
-    document.head.appendChild(styleTag);    
+    document.head.appendChild(styleTag);
   }
-  let i = view && style
-      ? 3
-      : view || style ? 2 : 1;
-  const deps = args[i];
-  const Logic = args[i + 1];
+  let i = view && style ? 3 : view || style ? 2 : 1;
+  const deps = args[i] && args[i].constructor === Array && args[i];
+  if (deps) {
+    i++;
+  }
+  const Logic = args[i] && typeof args[i] === "function" && args[i];
   const component = {
     name: name,
     view: view,
@@ -102,13 +99,15 @@ export function define(...args) {
   components[name] = component;
   component.promise = new Promise(resolve => {
     loadDeps(name, deps).then(res => {
-      if (!view){
+      if (!view) {
         component.view = res[0];
       }
       component.deps = res;
-      component.logic = context => {
-        Logic.call(context, context, component.deps);
-      };
+      if (Logic) {
+        component.logic = context => {
+          Logic.call(context, context, component.deps);
+        };
+      }
       event.fire(`${name}.load`, component);
       resolve(component);
     });

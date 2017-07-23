@@ -608,19 +608,38 @@ const event = new PubSub();
  * @param {Array} deps - List of all dependencies
  * @param {function} Logic - Logic of the component
  */
-function define(name, deps, Logic) {
+function define(...args) {
+  const name = args[0];
+  const view = typeof args[1] === "string" ? args[1] : null;
+  const style = typeof args[2] === "string" ? args[2] : null;
+  if (style) {
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = style;
+    document.head.appendChild(styleTag);
+  }
+  let i = view && style ? 3 : view || style ? 2 : 1;
+  const deps = args[i] && args[i].constructor === Array && args[i];
+  if (deps) {
+    i++;
+  }
+  const Logic = args[i] && typeof args[i] === "function" && args[i];
   const component = {
     name: name,
+    view: view,
     deps: null
   };
   components[name] = component;
   component.promise = new Promise(resolve => {
-    loadDeps(name, ["view.html", "style.css", ...deps]).then(args => {
-      component.view = args[0];
-      component.deps = args;
-      component.logic = context => {
-        Logic.call(context, context, component.deps);
-      };
+    loadDeps(name, deps).then(res => {
+      if (!view) {
+        component.view = res[0];
+      }
+      component.deps = res;
+      if (Logic) {
+        component.logic = context => {
+          Logic.call(context, context, component.deps);
+        };
+      }
       event.fire(`${name}.load`, component);
       resolve(component);
     });
