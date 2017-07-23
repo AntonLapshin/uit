@@ -4,7 +4,7 @@ import helper from "./test.helper";
 
 describe("Main", () => {
   it("run should work", done => {
-    define("test", [], ctx => {
+    define("test", "<div></div>", ["style.css"], ctx => {
       ctx.version = 1;
     });
     const el = new Element(undefined, []);
@@ -16,10 +16,18 @@ describe("Main", () => {
   });
 
   it("define should work", done => {
+    event.on("custom.load", component => {
+      component.view.should.be.equal("<div>Custom</div>");
+      done();
+    });
+    define("custom", "<div>Custom</div>", ["style.css"]);
+  });
+
+  it("load view as a dep", done => {
     event.on("test.load", component => {
       component.view.should.be.equal("<div></div>");
       done();
     });
-    define("test", []);
-  });
+    define("test", ["view.html", "style.css"]);
+  });  
 });

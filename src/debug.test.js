@@ -5,7 +5,7 @@ import helper from "./test.helper";
 
 describe("Debug", () => {
   it("debug", done => {
-    define("test", [], ctx => {
+    define("test", ["view.html", "style.css"], ctx => {
       ctx.version = 1;
     });
     const el = new Element(undefined, []);

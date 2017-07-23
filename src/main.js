@@ -76,16 +76,36 @@ export const event = new PubSub();
  * @param {Array} deps - List of all dependencies
  * @param {function} Logic - Logic of the component
  */
-export function define(name, deps, Logic) {
+export function define(...args) {
+  const name = args[0];
+  const view = typeof args[1] === "string"
+    ? args[1]
+    : null;
+  const style = typeof args[2] === "string"
+    ? args[2]
+    : null;
+  if (style){
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = style;
+    document.head.appendChild(styleTag);    
+  }
+  let i = view && style
+      ? 3
+      : view || style ? 2 : 1;
+  const deps = args[i];
+  const Logic = args[i + 1];
   const component = {
     name: name,
+    view: view,
     deps: null
   };
   components[name] = component;
   component.promise = new Promise(resolve => {
-    loadDeps(name, ["view.html", "style.css", ...deps]).then(args => {
-      component.view = args[0];
-      component.deps = args;
+    loadDeps(name, deps).then(res => {
+      if (!view){
+        component.view = res[0];
+      }
+      component.deps = res;
       component.logic = context => {
         Logic.call(context, context, component.deps);
       };
