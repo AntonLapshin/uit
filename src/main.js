@@ -114,6 +114,14 @@ export function define(...args) {
       if (Logic) {
         component.logic = context => {
           Logic.call(context, context, component.deps);
+          //
+          // Add test method if exists
+          //
+          if (component.test) {
+            context.test = () => {
+              component.test(context);
+            };
+          }
         };
       }
       event.fire(`${name}.load`, component);
@@ -123,13 +131,26 @@ export function define(...args) {
 }
 
 /**
+ * Adds a test method to the component
+ * @param {string} name Name of the component
+ * @param {function} func Test logic (mock data)
+ */
+export function test(name, func) {
+  components[name].test = func;
+}
+
+/**
  * Loads and appends a droplet into container
  * @param {selector|string|Element} el - Container
  * @param {string} name - Name of the component
  * @returns {Promise<Component[]>} - List of the added component instances
  */
 export function append(el, name) {
-  return mount(el, name, `<div ${opts.DATA_NAME_ATTRIBUTE}="${name.split('.')[0]}"></div>`);
+  return mount(
+    el,
+    name,
+    `<div ${opts.DATA_NAME_ATTRIBUTE}="${name.split(".")[0]}"></div>`
+  );
 }
 
 /**

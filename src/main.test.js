@@ -1,5 +1,5 @@
 import should from "should";
-import { define, run, event } from "./main";
+import { define, run, event, test } from "./main";
 import helper from "./test.helper";
 
 describe("Main", () => {
@@ -29,5 +29,10 @@ describe("Main", () => {
       done();
     });
     define("test", ["view.html", "style.css"]);
-  });  
+  });
+
+  it("add a test method", () => {
+    define("test2", ["view.html", "style.css"]);
+    test("test2", () => {});
+  });
 });
