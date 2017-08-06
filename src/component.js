@@ -1,6 +1,3 @@
-/**
- * TODOs: Add comments
- */
 import { PubSub } from "./pubsub";
 import { dataBind } from "./data-bind";
 
@@ -30,7 +27,7 @@ export class Component extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
+    this.els = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
     this.children = {};
     logic && logic(this);
     dataBind.call(this);

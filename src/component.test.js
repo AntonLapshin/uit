@@ -1,10 +1,10 @@
 import should from "should";
 import { Component } from "./component";
-import helper from "./test.helper";
+require("jsdom-global")();
 
 describe("Component", () => {
   it("set", done => {
-    const instance = new Component("test", "test", new Element(), ctx => {
+    const instance = new Component("test", "test", document.createElement("div"), ctx => {
       ctx.version = 1;
     });
     instance.on("set", (data, olddata) => {
@@ -17,7 +17,7 @@ describe("Component", () => {
   });
 
   it("load", done => {
-    const instance = new Component("test", "test", new Element(), ctx => {
+    const instance = new Component("test", "test", document.createElement("div"), ctx => {
       ctx.version = 1;
     });
     instance.on("load", () => {
@@ -28,7 +28,7 @@ describe("Component", () => {
   });
 
   it("hide", () => {
-    const instance = new Component("test", "test", new Element(), ctx => {
+    const instance = new Component("test", "test", document.createElement("div"), ctx => {
       ctx.version = 1;
     });
     instance.el.style.display.should.be.equal("");
@@ -37,7 +37,7 @@ describe("Component", () => {
   });
 
   it("show", () => {
-    const instance = new Component("test", "test", new Element(), ctx => {
+    const instance = new Component("test", "test", document.createElement("div"), ctx => {
       ctx.version = 1;
     });
     instance.hide();
@@ -46,7 +46,7 @@ describe("Component", () => {
   });
 
   it("test", () => {
-    const instance = new Component("test", "test", new Element(), ctx => {
+    const instance = new Component("test", "test", document.createElement("div"), ctx => {
       ctx.version = 1;
     });
     instance.test();
