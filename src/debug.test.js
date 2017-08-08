@@ -1,8 +1,8 @@
 import should from "should";
 import { define, run } from "./main";
 import { debug } from "./debug";
-// import helper from "./test.helper";
-require("jsdom-global")();
+import helper from "./test.helper";
+// require("jsdom-global")();
 
 describe("Debug", () => {
   it("debug", done => {

@@ -4,40 +4,40 @@
 	(factory((global.uitDebug = global.uitDebug || {})));
 }(this, (function (exports) { 'use strict';
 
-const styleTemplate = `
-  <style>
-    body {
-      margin-right: 40%;
-    }
+const STYLES = `
+<style>
+  body {
+    margin-right: 40%;
+  }
 
-    #jsoneditor {
-      background-color: #fafafa;
-      width: 100%;
-      height: 100%;
-    }
+  #jsoneditor {
+    background-color: #fafafa;
+    width: 100%;
+    height: 100%;
+  }
 
-    #jsoneditor input {
-      position: relative;
-      opacity: 1;
-      left: 0;
-      vertical-align: bottom;
-    }
+  #jsoneditor input {
+    position: relative;
+    opacity: 1;
+    left: 0;
+    vertical-align: bottom;
+  }
 
-    .debug {
-      height: 100%;
-      width: 40%;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      right: 0;
-    }
-  </style>
+  .debug {
+    height: 100%;
+    width: 40%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+  }
+</style>
 `;
 
-const debugTemplate = `
-  <div class="debug">
-    <div id="jsoneditor"></div>
-  </div>      
+const VIEW = `
+<div class="debug">
+  <div id="jsoneditor"></div>
+</div>      
 `;
 
 const debounce = (func, wait) => {
@@ -65,7 +65,7 @@ const append = (el, html) => {
 };
 
 const debug = instance => {
-  append(document.getElementsByTagName("head")[0], styleTemplate);
+  append(document.getElementsByTagName("head")[0], STYLES);
   return Promise.all([
     window.uit.load(
       "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.7.2/jsoneditor.min.js"
@@ -74,7 +74,7 @@ const debug = instance => {
       "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.7.2/jsoneditor.min.css"
     )
   ]).then(() => {
-    append(document.getElementsByTagName("body")[0], debugTemplate);
+    append(document.getElementsByTagName("body")[0], VIEW);
     const container = document.getElementById("jsoneditor");
     const editor = new window.JSONEditor(container, {
       mode: "tree",

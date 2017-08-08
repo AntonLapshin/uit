@@ -5,14 +5,6 @@ import { proxy } from "proxy-observable";
 import { helper } from "./test.helper";
 
 describe("Rules", () => {
-  // it("src", () => {
-  //   const el = new Element("test", []);
-  //   const instance = new Component("test", null, el, () => {});
-  //   rules.src.call(instance, el, "data.src");
-  //   should.not.exist(el.getAttribute("src"));
-  //   instance.set(proxy({ src: "resource/test.png" }));
-  //   el.getAttribute("src").should.be.equal("resource/test.png");
-  // });
   it("src", () => {
     const el = new Element("test", []);
     const instance = new Component("test", null, el, () => {});

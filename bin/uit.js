@@ -231,15 +231,17 @@ const rules = {
  * Data-binding feature implementation
  */
 function dataBind() {
-  if (!this.elAll || this.elAll.length === 0) {
+  if (!this.els || this.els.length === 0) {
     return;
   }
-  const els = Array.prototype.filter.call(this.elAll, el => {
+  const els = Array.prototype.filter.call(this.els, el => {
     return el.matches(`[${opts.DATA_BIND_ATTRIBUTE}]`);
   });
   els.forEach(el => {
     const bindAttr = el.getAttribute(opts.DATA_BIND_ATTRIBUTE);
-    if (!bindAttr) return;
+    if (!bindAttr) {
+      return;
+    }
     const statements = bindAttr.split(",");
     statements.forEach(statement => {
       const parts = statement.split(":");
@@ -254,9 +256,6 @@ function dataBind() {
   });
 }
 
-/**
- * TODOs: Add comments
- */
 const opts = {
   DATA_NAME_ATTRIBUTE: "data-uit-name",
   DATA_READY_ATTRIBUTE: "data-uit-ready",
@@ -283,7 +282,7 @@ class Component extends PubSub {
     this.name = name;
     this.path = path;
     this.el = el;
-    this.elAll = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
+    this.els = el.querySelectorAll(`*:not([${opts.DATA_NAME_ATTRIBUTE}])`);
     this.children = {};
     logic && logic(this);
     dataBind.call(this);
@@ -538,18 +537,18 @@ const lookup = el => {
 };
 
 /**
- * Mounts a component into DOM and looks for another components inside
- * @param {Element} el - Container
- * @param {string} path - Path to the component
- * @param {string} html - Input html string
- * @returns {Promise<Component[]>} - List of mounted components
+ * Mounts a component into DOM and looks for child components inside
+ * @param {Element} el Container
+ * @param {string} name Name of the component
+ * @param {string} html Input html string
+ * @returns {Promise<Component[]>} List of mounted components
  * @ignore
  */
-const mount = (el, path, html) => {
+const mount = (el, name, html) => {
   if (el instanceof Element !== true) {
     throw "el is not an Element instance";
   }
-  return loadComponent(path).then(() => {
+  return loadComponent(name).then(() => {
     const temp = document.createElement("div");
     temp.innerHTML = html;
     const item = temp.firstChild;
@@ -561,18 +560,16 @@ const mount = (el, path, html) => {
 /**
  * Loads all component's dependencies
  * @param {string} name - Name of the component
- * @param {string} folder - Folder of the component
  * @param {Array} deps - List of the dependencies
  * @returns {Promise<object[]>} - List of the loaded dependencies
  * @ignore
  */
-const loadDeps = (name, folder, deps) => {
-  const baseUrl = opts.BASE_URL + folder;
+const loadDeps = (name, deps) => {
   const promises = deps.map(dep => {
     if (dep.indexOf(".") === -1) {
       return loadComponent(dep);
     }
-    const url = baseUrl + dep;
+    const url = opts.BASE_URL + dep;
     return load(url);
   });
 
@@ -581,14 +578,11 @@ const loadDeps = (name, folder, deps) => {
 
 /**
  * Loads logic + view + style. The define method is called after loading
- * @param {string} path - Path to the component
- * @returns {Promise<object>} - Component definition
+ * @param {string} name Name of the component
+ * @returns {Promise<object>} Component definition
  * @ignore
  */
-const loadComponent = path => {
-  const p = path.split("/");
-  const fname = p.pop();
-  const name = fname.split(".")[0];
+const loadComponent = name => {
   if (components[name]) {
     return components[name].promise;
   }
@@ -597,7 +591,7 @@ const loadComponent = path => {
     event.on(`${name}.load`, component => {
       resolve(component);
     });
-    loadDeps(name, p.join("/"), [fname]);
+    loadDeps(name, [name + ".js"]);
   });
 };
 
@@ -638,7 +632,7 @@ function define(...args) {
   };
   components[name] = component;
   component.promise = new Promise(resolve => {
-    loadDeps(name, "", deps).then(res => {
+    loadDeps(name, deps).then(res => {
       if (!view) {
         component.view = res[0];
       }
@@ -647,12 +641,12 @@ function define(...args) {
         component.logic = context => {
           Logic.call(context, context, component.deps);
           //
-          // Add test method if exists
+          // Add a testing logic if it exists
           //
           if (component.test) {
-            context.test = () => {
+            context.on("test", () => {
               component.test(context);
-            };
+            });
           }
         };
       }
@@ -678,21 +672,21 @@ function test(name, func) {
  * @returns {Promise<Component[]>} - List of the added component instances
  */
 function append(el, name) {
-  return mount(
-    el,
-    name,
-    `<div ${opts.DATA_NAME_ATTRIBUTE}="${name.split(".")[0]}"></div>`
-  );
+  return mount(el, name, `<div ${opts.DATA_NAME_ATTRIBUTE}="${name}"></div>`);
 }
 
 /**
  * Runs the environment by a selected component via search string
- * @param {selector|string|Element} el - Container
+ * @param {selector|string|Element} el Container
+ * @param {string} name [Optional] Name of the component
  * @returns {Promise<Component[]>} - List of the added component instances
  */
-function run(el) {
-  const search = window.location.search;
-  const name = search.length > 0 ? search.substring(1) : null;
+function run(el, name) {
+  name =
+    name ||
+    (window.location.search.length > 0
+      ? window.location.search.substring(1)
+      : null);
 
   return append(el, name).then(instance => {
     if (window.uitDebug) {
