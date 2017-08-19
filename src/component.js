@@ -8,7 +8,7 @@ export const opts = {
   DATA_CALL_ATTRIBUTE: "data-uit-call",
   DATA_BIND_ATTRIBUTE: "data-bind",
   CALL_BY_INDEX: "byIndex",
-  BASE_URL: "./components/"
+  BASE_URL: "components/"
 };
 
 /**

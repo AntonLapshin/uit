@@ -138,10 +138,14 @@ export function test(name, func) {
  * Loads and appends a droplet into container
  * @param {selector|string|Element} el - Container
  * @param {string} name - Name of the component
+ * @param {string} call - Id of the component, how it's called in the children set. 
+ * Could be an item of Array: "byIndex"
  * @returns {Promise<Component[]>} - List of the added component instances
  */
-export function append(el, name) {
-  return mount(el, name, `<div ${opts.DATA_NAME_ATTRIBUTE}="${name}"></div>`);
+export function append(el, name, call) {
+  const callHtml = call ? ` ${opts.DATA_CALL_ATTRIBUTE}="${call}"` : "";
+  const html = `<div ${opts.DATA_NAME_ATTRIBUTE}="${name}"${callHtml}></div>`;
+  return mount(el, name, html);
 }
 
 /**
