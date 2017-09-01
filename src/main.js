@@ -164,6 +164,8 @@ export function run(el, name) {
   return append(el, name).then(instance => {
     if (window.uitDebug) {
       return window.uitDebug.debug(instance);
+    } else {
+      instance.test();
     }
     return instance;
   });
